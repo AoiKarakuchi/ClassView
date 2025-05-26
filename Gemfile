@@ -66,3 +66,14 @@ group :test do
   gem "guard"
   gem "guard-minitest"
 end
+
+# 認証用のライブラリと環境変数用のライブラリの読み込み
+gem "devise"
+gem "dotenv-rails"
+gem "omniauth-twitter"
+gem "omniauth-google-oauth2"
+gem "omniauth-rails_csrf_protection"
+
+# 多言語設定
+gem "rails-i18n"
+gem "devise-i18n-views"
