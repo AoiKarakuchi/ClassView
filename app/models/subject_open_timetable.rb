@@ -1,0 +1,2 @@
+class SubjectOpenTimetable < ApplicationRecord
+end
