@@ -10,7 +10,55 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_25_230840) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_04_075524) do
+  create_table "classrooms", force: :cascade do |t|
+    t.string "name", null: false
+    t.float "latitude", null: false
+    t.float "longitude", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_classrooms_on_name", unique: true
+  end
+
+  create_table "subject_held_classrooms", force: :cascade do |t|
+    t.string "subject_number", null: false
+    t.string "classrooms_name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "subject_open_timetables", force: :cascade do |t|
+    t.string "subject_number", null: false
+    t.integer "timetable_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["timetable_id"], name: "index_subject_open_timetables_on_timetable_id"
+  end
+
+  create_table "subjects", force: :cascade do |t|
+    t.string "number", null: false
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["number"], name: "index_subjects_on_number", unique: true
+  end
+
+  create_table "timetables", force: :cascade do |t|
+    t.string "semester", null: false
+    t.string "dayofweek", null: false
+    t.string "hour", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "user_regist_subjects", force: :cascade do |t|
+    t.string "user_email", null: false
+    t.string "subject_number", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_email", "subject_number"], name: "index_user_regist_subjects_on_user_email_and_subject_number", unique: true
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -25,4 +73,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_25_230840) do
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
+
+  add_foreign_key "subject_held_classrooms", "classrooms", column: "classrooms_name", primary_key: "name"
+  add_foreign_key "subject_held_classrooms", "subjects", column: "subject_number", primary_key: "number"
+  add_foreign_key "subject_open_timetables", "subjects", column: "subject_number", primary_key: "number"
+  add_foreign_key "subject_open_timetables", "timetables"
+  add_foreign_key "user_regist_subjects", "subjects", column: "subject_number", primary_key: "number"
+  add_foreign_key "user_regist_subjects", "users", column: "user_email", primary_key: "email"
 end

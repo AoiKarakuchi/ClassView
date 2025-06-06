@@ -38,4 +38,10 @@ class User < ApplicationRecord
       update_attributes(params, *options)
     end
   end
+
+  #アソシエーションとバリデーションの設定
+  has_many :user_regist_subjects,foreign_key: :user_email, primary_key: :email
+  validates :email, presence: true
+  validates :name, presence: true
+
 end

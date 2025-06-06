@@ -17,4 +17,10 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   root "static_pages#home"
+
+  Rails.application.routes.draw do
+    resources :schedules do
+      collection { post :import }
+    end
+  end
 end
