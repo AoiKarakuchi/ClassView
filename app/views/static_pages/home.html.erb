@@ -1,2 +1,10 @@
 <h1>StaticPages#home</h1>
 <p>Hello, <%= @user.name %></p>
+
+<h2>履修科目のCSVインポート</h2>
+
+<%= form_with url: import_user_regist_subjects_path, local: true, multipart: true do |form| %>
+  <%= form.file_field :file %>
+  <%= form.submit "インポート" %>
+<% end %>
+
