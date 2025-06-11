@@ -41,6 +41,7 @@ class User < ApplicationRecord
 
   #アソシエーションとバリデーションの設定
   has_many :user_regist_subjects,foreign_key: :user_email, primary_key: :email
+  has_many :subjects, through: :user_regist_subjects,source: :subject
   validates :email, presence: true
   validates :name, presence: true
 

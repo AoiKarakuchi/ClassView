@@ -8,3 +8,42 @@
   <%= form.submit "インポート" %>
 <% end %>
 
+
+<select id="term">
+    <option value="春A">春A</option>
+    <option value="春B">春B</option>
+    <option value="春C">春C</option>
+    <option value="秋A">秋A</option>
+    <option value="秋B">秋B</option>
+    <option value="秋C">秋C</option>
+</select>
+<h1 id="semester">春A</h1>
+<div id="subjects"></div>
+<script>
+    const selectElement=document.getElementById("term");
+    //app/controllers/courses_controller.rbのby_termを以下で実行
+    const showClass=(term)=>{
+        fetch(`/courses/by_term?term=${encodeURIComponent(term)}`)
+        .then(response => response.json())
+        .then(data => {
+            const semester=document.getElementById('semester');
+            const subjects=document.getElementById('subjects');
+            semester.innerHTML = '';
+            //dataをうまくとってこれれば学期を表示
+            semester.innerHTML = data.length > 0 ? data[0].semester : 'no data';
+            subjects.innerHTML = '';
+            //jsonの形が配列(subjectは二重配列)で返されているのでforEachを行っている
+            // 表示方法をいじる場合はここを変更してください
+            data.forEach(entry => {
+                entry.subjects.forEach(subject => {
+                subjects.innerHTML += `<p>${subject.number} - ${subject.name}</p>`;
+                });
+            });
+        });
+    }
+    showClass("春A");//デフォルト春Aにしてある。動的に現在の学期を入れる場合はここの引数をいじってください
+    selectElement.addEventListener('change',(e)=>{//学期を変更したときにおこるアクション
+        const term=e.target.value;
+        showClass(term);
+    });
+</script>

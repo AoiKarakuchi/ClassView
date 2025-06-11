@@ -1,6 +1,6 @@
 require 'csv'
 
-class UserRegistSubject < ApplicationRecor
+class UserRegistSubject < ApplicationRecord
     def self.import(file, current_user)
         CSV.foreach(file.path, headers: false, encoding: 'UTF-8') do |row|
             subject_number = row[0].to_s.strip

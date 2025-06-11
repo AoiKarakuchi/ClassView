@@ -18,6 +18,8 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   root "static_pages#home"
 
+  get "courses/by_term", to: "courses#by_term"
+
   resources :user_regist_subjects do
     collection { post :import }
   end
