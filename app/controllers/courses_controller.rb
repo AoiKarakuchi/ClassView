@@ -14,9 +14,9 @@ class CoursesController < ApplicationController
       user=User.find_by(email: current_user.email)
 
       # Timetableとsubjectを結合
-      timetables = Timetable.joins(subject_open_timetables: :subject)
+      timetables = Timetable.joins(:subject_open_timetables)
       # ログインしたアカウントの履修した授業番号と選択した学期をを元に絞り込み
-                            .where(subjects: { number: user.subjects.pluck(:number) }, semester: semester)
+                            .where(subject_open_timetables: {subject_number: user.subjects.pluck(:number)}, semester: semester)
       # 重複を取り除く
                             .distinct
       #詳しいデバッグ用ログ

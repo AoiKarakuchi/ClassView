@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_04_075524) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_13_073204) do
   create_table "classrooms", force: :cascade do |t|
     t.string "name", null: false
     t.float "latitude", null: false
@@ -22,7 +22,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_04_075524) do
 
   create_table "subject_held_classrooms", force: :cascade do |t|
     t.string "subject_number", null: false
-    t.string "classrooms_name", null: false
+    t.string "classroom_name"
+    t.integer "year"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -32,6 +33,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_04_075524) do
     t.integer "timetable_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "year"
     t.index ["timetable_id"], name: "index_subject_open_timetables_on_timetable_id"
   end
 
@@ -44,11 +46,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_04_075524) do
   end
 
   create_table "timetables", force: :cascade do |t|
-    t.string "semester", null: false
-    t.string "dayofweek", null: false
-    t.string "hour", null: false
+    t.string "semester"
+    t.string "dayofweek"
+    t.string "hour"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "note"
   end
 
   create_table "user_regist_subjects", force: :cascade do |t|
@@ -56,6 +59,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_04_075524) do
     t.string "subject_number", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "year"
     t.index ["user_email", "subject_number"], name: "index_user_regist_subjects_on_user_email_and_subject_number", unique: true
   end
 
@@ -74,8 +78,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_04_075524) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  add_foreign_key "subject_held_classrooms", "classrooms", column: "classrooms_name", primary_key: "name"
-  add_foreign_key "subject_held_classrooms", "subjects", column: "subject_number", primary_key: "number"
+  add_foreign_key "subject_held_classrooms", "classrooms", column: "classroom_name", primary_key: "name"
   add_foreign_key "subject_open_timetables", "subjects", column: "subject_number", primary_key: "number"
   add_foreign_key "subject_open_timetables", "timetables"
   add_foreign_key "user_regist_subjects", "subjects", column: "subject_number", primary_key: "number"

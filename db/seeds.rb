@@ -7,28 +7,126 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
-# 科目
-subjects = [
-  { number: 'ABC101', name: '英語 I' },
-  { number: 'DEF202', name: '線形代数学' },
-  { number: 'GHI303', name: 'プログラミング入門' }
-].map do |attrs|
-  Subject.find_or_create_by(number: attrs[:number]) do |subject|
-    subject.name = attrs[:name]
+require 'csv'
+
+def expand_semesters(raw)
+  return [] if raw.blank?
+
+  # 複数の学期がカンマで区切られている場合に対応
+  tokens = raw.split(',').map(&:strip)
+  result = []
+
+  tokens.each do |token|
+    if token =~ /\A(春|秋)([A-C]+)\z/
+      season = $1
+      codes = $2.chars
+      result.concat(codes.map { |code| "#{season}#{code}" })
+    else
+      result << token
+    end
+  end
+
+  result
+end
+
+def parse_schedule(value)
+  return [ { day_of_week: nil, period: nil, note: value } ] if value.blank?
+
+  day_names = %w[日 月 火 水 木 金 土]
+  result = []
+  parts = value.split(',').map(&:strip)
+
+  last_day = nil
+
+  parts.each do |part|
+    if part =~ /\A([#{day_names.join}])(\d+)\z/
+      day = $1  # 例: "月"
+      period = $2.to_s
+      result << { day_of_week: day, period: period, note: nil }
+      last_day = day
+
+    elsif part =~ /\A\d+\z/ && last_day
+      result << { day_of_week: last_day, period: part.to_s, note: nil }
+
+    else
+      result << { day_of_week: nil, period: nil, note: part }
+      last_day = nil
+    end
+  end
+
+  result
+end
+
+semesters = [ "春A", "春B", "春C", "秋A", "秋B", "秋C", "通年", "夏季休業中", "春季休業中" ]
+times = [ "月", "火", "水", "木", "金", "土" ]
+hours = [ "1", "2", "3", "4", "5", "6", "7", "8" ]
+notes = [ "応談", "随時", "集中" ]
+year = 2025
+
+semesters.each do |s|
+  times.each do |t|
+    hours.each do |h|
+      Timetable.create(
+        semester: s,
+        dayofweek: t,
+        hour: h
+      )
+    end
+  end
+  notes.each do |n|
+    Timetable.create(
+      semester: s,
+      note: n
+    )
   end
 end
 
-# 時間割
-timetables = [
-  { semester: '春A', dayofweek: '月', hour: '1' },
-  { semester: '春A', dayofweek: '月', hour: '2' },
-  { semester: '春B', dayofweek: '火', hour: '1' }
-].map do |attrs|
-  Timetable.find_or_create_by(attrs)
+CSV.foreach("db/subjects.csv", headers: true) do |row|
+  subject_number = row["科目番号"].to_s.strip
+  Subject.find_or_create_by(
+    number: subject_number,
+    name: row["科目名"].to_s
+  )
+
+  semesters = expand_semesters(row["実施学期"])
+
+  if semesters.present?
+    schedules = parse_schedule(row["曜時限"])
+
+    semesters.each do |semester|
+      schedules.each do |s|
+        timetable = Timetable.find_by(
+          semester: semester,
+          dayofweek: s[:day_of_week],
+          hour: s[:period],
+          note: s[:note]
+        )
+
+        if timetable
+          SubjectOpenTimetable.find_or_create_by(
+            subject_number: subject_number,
+            timetable_id: timetable.id,
+            
+            year: year
+          )
+        end
+      end
+    end
+  end
+
+  classrooms = row["教室"].to_s.split(',').map(&:strip)
+
+  if classrooms.present?
+    classrooms.each do |c|
+      Classroom.find_or_create_by(
+        name: c
+      )
+
+      SubjectHeldClassroom.find_or_create_by(
+        subject_number: subject_number,
+        classroom_name: c,
+        year: year
+      )
+    end
+  end
 end
-
-# 科目と時間割の紐づけ
-SubjectOpenTimetable.find_or_create_by(subject_number: 'ABC101', timetable_id: timetables[0].id)
-SubjectOpenTimetable.find_or_create_by(subject_number: 'DEF202', timetable_id: timetables[1].id)
-SubjectOpenTimetable.find_or_create_by(subject_number: 'GHI303', timetable_id: timetables[2].id)
-
