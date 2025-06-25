@@ -26,6 +26,7 @@
         fetch(`/courses/by_term?term=${encodeURIComponent(term)}`)
         .then(response => response.json())
         .then(data => {
+            console.log("取得したデータ:", data);
             const semester=document.getElementById('semester');
             const subjects=document.getElementById('subjects');
             semester.innerHTML = '';
