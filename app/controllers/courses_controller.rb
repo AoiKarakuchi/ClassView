@@ -25,13 +25,19 @@ class CoursesController < ApplicationController
       Rails.logger.debug "Timetables count: #{timetables.count}"
       Rails.logger.debug "Timetables semesters: #{timetables.pluck(:semester).uniq}"
       # home.html.erbに渡すデータ
-      render json: timetables.map { |timetable|
-        subjects = timetable.subjects.select { |s| user_subject_numbers.include?(s.number) }
-
-        {
-          semester: timetable.semester,
-          subjects: subjects.map { |s| s.as_json(only: [:number, :name]) }
-        }
+      render json: timetables.flat_map { |timetable|
+        timetable.subjects.select { |s| user_subject_numbers.include?(s.number) }.map do |subject|
+          {
+            semester: timetable.semester,
+            dayofweek: timetable.dayofweek,
+            hour: timetable.hour,
+            subject: {
+              number: subject.number,
+              name: subject.name
+            }
+          }
+        end
+          #subjects: subjects.map { |s| s.as_json(only: [:number, :name]) } 
       }
 
     rescue => e
@@ -39,4 +45,23 @@ class CoursesController < ApplicationController
       render json: { error: "データ取得中にエラーが発生しました" }, status: 500
     end
   end
+
+  def delete_subject
+    semester = params[:term]
+    subject_number = params[:number]
+
+    begin
+      user = User.find_by(email: current_user.email)
+
+      deleted_count = UserRegistSubject
+        .where(subject_number: subject_number)
+        .delete_all
+
+      render json: { success: true, deleted_count: deleted_count }
+    rescue => e
+      logger.error "Delete subject error: #{e.message}"
+      render json: { success: false, error: e.message }, status: 500
+    end
+  end
+
 end

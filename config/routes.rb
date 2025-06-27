@@ -23,4 +23,7 @@ Rails.application.routes.draw do
   resources :user_regist_subjects do
     collection { post :import }
   end
+  
+  delete 'courses/delete_subject', to: 'courses#delete_subject'
+
 end

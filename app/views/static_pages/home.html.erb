@@ -19,32 +19,109 @@
 </select>
 <h1 id="semester">春A</h1>
 <div id="subjects"></div>
+<table id="timetable" border="1" cellspacing="0" cellpadding="5">
+  <thead>
+    <tr>
+      <th>時限＼曜日</th>
+      <th>月</th>
+      <th>火</th>
+      <th>水</th>
+      <th>木</th>
+      <th>金</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- 1限〜6限の行を作る -->
+    <% (1..6).each do |period| %>
+      <tr>
+        <td><%= period %>限</td>
+        <td data-day="月" data-period="<%= period %>"></td>
+        <td data-day="火" data-period="<%= period %>"></td>
+        <td data-day="水" data-period="<%= period %>"></td>
+        <td data-day="木" data-period="<%= period %>"></td>
+        <td data-day="金" data-period="<%= period %>"></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
 <script>
-    const selectElement=document.getElementById("term");
-    //app/controllers/courses_controller.rbのby_termを以下で実行
-    const showClass=(term)=>{
-        fetch(`/courses/by_term?term=${encodeURIComponent(term)}`)
-        .then(response => response.json())
-        .then(data => {
-            console.log("取得したデータ:", data);
-            const semester=document.getElementById('semester');
-            const subjects=document.getElementById('subjects');
-            semester.innerHTML = '';
-            //dataをうまくとってこれれば学期を表示
-            semester.innerHTML = data.length > 0 ? data[0].semester : 'no data';
-            subjects.innerHTML = '';
-            //jsonの形が配列(subjectは二重配列)で返されているのでforEachを行っている
-            // 表示方法をいじる場合はここを変更してください
-            data.forEach(entry => {
-                entry.subjects.forEach(subject => {
-                    subjects.innerHTML += `<p>${subject.number} - ${subject.name}</p>`;
-                });
-            });
+  const selectElement = document.getElementById("term");
+
+  const showClass = (term) => {
+    fetch(`/courses/by_term?term=${encodeURIComponent(term)}`)
+      .then(response => response.json())
+      .then(data => {
+        console.log("取得したデータ:", data);
+        const semester = document.getElementById('semester');
+        const subjects = document.getElementById('subjects');
+
+        semester.innerHTML = data.length > 0 ? data[0].semester : 'no data';
+        subjects.innerHTML = '<em>科目をクリックすると、ここに詳細が表示されます。</em>';
+
+        document.querySelectorAll('#timetable td[data-day]').forEach(cell => {
+          cell.innerHTML = '';
+          cell.removeAttribute("data-name");
+          cell.removeAttribute("data-number");
+          cell.style.cursor = "";
         });
-    }
-    showClass("春A");//デフォルト春Aにしてある。動的に現在の学期を入れる場合はここの引数をいじってください
-    selectElement.addEventListener('change',(e)=>{//学期を変更したときにおこるアクション
-        const term=e.target.value;
-        showClass(term);
-    });
+
+        data.forEach(entry => {
+          const cell = document.querySelector(`td[data-day="${entry.dayofweek}"][data-period="${entry.hour}"]`);
+          if (cell) {
+            const subject = entry.subject;
+            cell.innerHTML = `${subject.name}<br><small>${subject.number}</small>`;
+            cell.dataset.name = subject.name;
+            cell.dataset.number = subject.number;
+            cell.style.cursor = "pointer";
+
+            cell.onclick = () => {
+              subjects.innerHTML = `
+                <p><strong>科目名:</strong> ${subject.name}</p>
+                <p><strong>科目番号:</strong> ${subject.number}</p>
+                <button id="delete-subject">この科目を削除</button>
+              `;
+
+              document.getElementById("delete-subject").addEventListener("click", () => {
+                if (!confirm("この科目をすべての時間帯から削除しますか？")) return;
+
+                fetch(`/courses/delete_subject?term=${encodeURIComponent(entry.semester)}&number=${encodeURIComponent(subject.number)}`, {
+                  method: 'DELETE',
+                  headers: {
+                    'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Content-Type': 'application/json'
+                  }
+                })
+                  .then(r => r.json())
+                  .then(res => {
+                    if (res.success) {
+                      alert(`削除しました (${res.deleted_count} 件)`);
+                      const allCells = document.querySelectorAll(`#timetable td[data-number="${subject.number}"]`);
+                      allCells.forEach(c => {
+                        c.innerHTML = "";
+                        c.removeAttribute("data-name");
+                        c.removeAttribute("data-number");
+                        c.style.cursor = "";
+                      });
+                      subjects.innerHTML = '<em>科目をクリックすると、ここに詳細が表示されます。</em>';
+                    } else {
+                      alert("削除に失敗しました: " + (res.error || ""));
+                    }
+                  })
+                  .catch(err => {
+                    console.error(err);
+                    alert("削除エラーが発生しました");
+                  });
+              });
+            };
+          }
+        });
+      });
+  };
+
+  showClass("春A");
+  selectElement.addEventListener('change', (e) => {
+    const term = e.target.value;
+    showClass(term);
+  });
 </script>
