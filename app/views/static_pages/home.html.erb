@@ -8,14 +8,23 @@
   <%= form.submit "インポート" %>
 <% end %>
 
+<label for="year">年度:</label>
+<select id="year">
+  <% (2022..2025).each do |y| %>
+    <option value="<%= y %>" <%= "selected" if y == Time.now.year %>><%= y %>年度</option>
+  <% end %>
+</select>
 
 <select id="term">
     <option value="春A">春A</option>
     <option value="春B">春B</option>
     <option value="春C">春C</option>
+    <option value="夏季休業中">夏季休業中</option>
     <option value="秋A">秋A</option>
     <option value="秋B">秋B</option>
     <option value="秋C">秋C</option>
+    <option value="春季休業中">春季休業中</option>
+    <option value="通年">通年</option>
 </select>
 <h1 id="semester">春A</h1>
 <div id="subjects"></div>
@@ -28,11 +37,12 @@
       <th>水</th>
       <th>木</th>
       <th>金</th>
+      <th>土</th>
     </tr>
   </thead>
   <tbody>
     <!-- 1限〜6限の行を作る -->
-    <% (1..6).each do |period| %>
+    <% (1..8).each do |period| %>
       <tr>
         <td><%= period %>限</td>
         <td data-day="月" data-period="<%= period %>"></td>
@@ -40,23 +50,28 @@
         <td data-day="水" data-period="<%= period %>"></td>
         <td data-day="木" data-period="<%= period %>"></td>
         <td data-day="金" data-period="<%= period %>"></td>
+        <td data-day="土" data-period="<%= period %>"></td>
       </tr>
     <% end %>
   </tbody>
 </table>
+<h2>その他授業</h2>
+<div id="non_period_subjects"><em>該当科目がここに表示されます</em></div>
+
 
 <script>
   const selectElement = document.getElementById("term");
+  const yearSelect = document.getElementById("year");
 
-  const showClass = (term) => {
-    fetch(`/courses/by_term?term=${encodeURIComponent(term)}`)
+  const showClass = (term, year) => {
+    fetch(`/courses/by_term?term=${encodeURIComponent(term)}&year=${encodeURIComponent(year)}`)
       .then(response => response.json())
       .then(data => {
         console.log("取得したデータ:", data);
         const semester = document.getElementById('semester');
         const subjects = document.getElementById('subjects');
+        document.getElementById('semester').textContent = `${year}年度 ${term}`;
 
-        semester.innerHTML = data.length > 0 ? data[0].semester : 'no data';
         subjects.innerHTML = '<em>科目をクリックすると、ここに詳細が表示されます。</em>';
 
         document.querySelectorAll('#timetable td[data-day]').forEach(cell => {
@@ -85,7 +100,7 @@
               document.getElementById("delete-subject").addEventListener("click", () => {
                 if (!confirm("この科目をすべての時間帯から削除しますか？")) return;
 
-                fetch(`/courses/delete_subject?term=${encodeURIComponent(entry.semester)}&number=${encodeURIComponent(subject.number)}`, {
+                fetch(`/courses/delete_subject?term=${encodeURIComponent(entry.semester)}&year=${encodeURIComponent(year)}&number=${encodeURIComponent(subject.number)}`, {
                   method: 'DELETE',
                   headers: {
                     'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
@@ -115,13 +130,75 @@
               });
             };
           }
+
+          const nonPeriodSubjectsDiv = document.getElementById('non_period_subjects');
+          const nonPeriodSubjects = data.filter(entry => {
+            const note = (entry.note || "").toLowerCase();
+            return note.includes("応談") || note.includes("集中") || note.includes("随時");
+          });
+
+          if (nonPeriodSubjects.length > 0) {
+            nonPeriodSubjectsDiv.innerHTML = nonPeriodSubjects.map(entry => {
+              const subject = entry.subject;
+              return `
+                <div class="non-period-subject" data-number="${subject.number}">
+                  <strong>${subject.name}</strong>（${subject.number}）<br>
+                  <small>${entry.note}</small>
+                  <button data-delete="${subject.number}">削除</button>
+                </div>
+              `;
+            }).join('');
+
+            document.querySelectorAll('.non-period-subject button[data-delete]').forEach(button => {
+              button.addEventListener('click', () => {
+                const number = button.dataset.delete;
+                if (!confirm("この科目を削除しますか？")) return;
+
+                fetch(`/courses/delete_subject?term=${encodeURIComponent(selectElement.value)}&year=${encodeURIComponent(year)}&number=${encodeURIComponent(number)}`, {
+                  method: 'DELETE',
+                  headers: {
+                    'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Content-Type': 'application/json'
+                  }
+                })
+                  .then(r => r.json())
+                  .then(res => {
+                    if (res.success) {
+                      alert(`削除しました (${res.deleted_count} 件)`);
+                      showClass(selectElement.value); // 再読み込み
+                    } else {
+                      alert("削除に失敗しました: " + (res.error || ""));
+                    }
+                  })
+                  .catch(err => {
+                    console.error(err);
+                    alert("削除エラーが発生しました");
+                  });
+              });
+            });
+
+          } else {
+            nonPeriodSubjectsDiv.innerHTML = '<em>該当科目がここに表示されます</em>';
+          }
+
         });
       });
   };
+  // 初期表示（今年の春A）
+showClass("春A", yearSelect.value);
 
-  showClass("春A");
-  selectElement.addEventListener('change', (e) => {
-    const term = e.target.value;
-    showClass(term);
-  });
+// 学期選択変更時
+selectElement.addEventListener('change', (e) => {
+  const term = e.target.value;
+  const year = yearSelect.value;
+  showClass(term, year);
+});
+
+// 年度選択変更時
+yearSelect.addEventListener('change', (e) => {
+  const year = e.target.value;
+  const term = selectElement.value;
+  showClass(term, year);
+});
+
 </script>

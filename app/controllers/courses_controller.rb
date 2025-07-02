@@ -3,7 +3,7 @@ class CoursesController < ApplicationController
   def by_term
     # home.html.erbのfetchで渡ってきたtermを受け取る
     semester = params[:term]
-
+    year = params[:year].to_i
     # デバッグ用ログ
     Rails.logger.debug "Received semester: #{semester}"
 
@@ -16,7 +16,7 @@ class CoursesController < ApplicationController
       # Timetableとsubjectを結合
       timetables = Timetable.joins(:subject_open_timetables)
       # ログインしたアカウントの履修した授業番号と選択した学期を元に絞り込み
-                            .where(subject_open_timetables: {subject_number: user_subject_numbers}, semester: semester)
+                            .where(subject_open_timetables: {subject_number: user_subject_numbers, year: year}, semester: semester)
       # 重複を取り除く
                             .distinct
 
@@ -31,6 +31,7 @@ class CoursesController < ApplicationController
             semester: timetable.semester,
             dayofweek: timetable.dayofweek,
             hour: timetable.hour,
+            note: timetable.note,
             subject: {
               number: subject.number,
               name: subject.name

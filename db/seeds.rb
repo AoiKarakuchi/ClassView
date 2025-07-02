@@ -73,6 +73,9 @@ semesters.each do |s|
       )
     end
   end
+end
+
+semesters.each do |s|
   notes.each do |n|
     Timetable.create(
       semester: s,
