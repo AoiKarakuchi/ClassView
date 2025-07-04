@@ -16,9 +16,12 @@ Rails.application.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   # Defines the root path route ("/")
-  root "static_pages#home"
+  root "static_pages#map"
+  get "home", to: "static_pages#home"
+  #root "static_pages#home"
 
   get "courses/by_term", to: "courses#by_term"
+    get "map", to: "map#showMap"
 
   resources :user_regist_subjects do
     collection { post :import }

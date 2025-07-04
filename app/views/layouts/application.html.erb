@@ -45,6 +45,11 @@
 
   <body>
     <%= yield %>
-    
+    <%# 地図表示で追加しました %>
+    <script>
+      if (window.location.pathname === "/" && sessionStorage.getItem("reloadedAfterLogin")) {
+        sessionStorage.removeItem("reloadedAfterLogin");
+      }
+    </script>
   </body>
 </html>

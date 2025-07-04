@@ -26,5 +26,6 @@ module ClassviewApp
 
     # デフォルトの言語を日本語に設定
     config.i18n.default_locale = :ja
+    config.autoload_paths << Rails.root.join("app/lib")
   end
 end

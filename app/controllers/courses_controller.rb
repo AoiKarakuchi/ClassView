@@ -38,7 +38,6 @@ class CoursesController < ApplicationController
             }
           }
         end
-          #subjects: subjects.map { |s| s.as_json(only: [:number, :name]) } 
       }
 
     rescue => e
@@ -47,6 +46,7 @@ class CoursesController < ApplicationController
     end
   end
 
+  #授業の削除
   def delete_subject
     semester = params[:term]
     subject_number = params[:number]

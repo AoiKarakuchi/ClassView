@@ -133,3 +133,17 @@ CSV.foreach("db/subjects.csv", headers: true) do |row|
     end
   end
 end
+
+CSV.foreach("db/classrooms.csv", headers: true) do |row|
+  name = row["教室"]
+  latitude = row["緯度"]
+  longitude = row["経度"]
+
+  # 教室が存在しない場合のみ作成（重複防止）
+  classroom = Classroom.find_or_initialize_by(name: name)
+  classroom.latitude = latitude
+  classroom.longitude = longitude
+  classroom.save!
+
+  puts "✅ 教室を作成しました: #{name}"
+end

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<%# 全体的に変更 %>
+<html>
+  <head>
+    <title>Leaflet Map with OpenStreetMap</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     crossorigin=""/>    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     crossorigin=""></script>
+    <style>
+      #map {
+        height: 500px;
+        width: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <% if flash[:just_logged_in] %>
+      <script>
+        // 1回だけリロードしてセッションを有効にした状態でAPIを呼び直す
+        if (!window.sessionStorage.getItem("reloadedAfterLogin")) {
+          window.sessionStorage.setItem("reloadedAfterLogin", "true");
+          location.reload();
+        } else {
+          window.sessionStorage.removeItem("reloadedAfterLogin");
+        }
+      </script>
+    <% end %>
+
+    <% 
+      days = { "月" => "月曜日", "火" => "火曜日", "水" => "水曜日", "木" => "木曜日", "金" => "金曜日" }
+      today = DateInfo.weekday 
+    %>
+
+    <h1 id="title">OpenStreetMap表示テスト</h1>
+    <select id="dayofweek">
+      <% days.each do |value, name| %>
+        <option value="<%= value %>" <%= 'selected' if value == today %>>
+          <%= name %>
+        </option>
+      <% end %>
+    </select>
+    <div id="map">読み込み中...</div>
+    <script>
+        const hour="<%=DateInfo.time %>"
+        const term="<%=DateInfo.semester%>";
+        const weekday="<%=DateInfo.weekday%>";
+        const year="<%=DateInfo.year%>";
+        const title=document.getElementById("title");
+        const week_id=document.getElementById("dayofweek");
+        const showbutton=document.getElementById("show");
+        let map;
+        let markerLayer;
+        const Tsukuba=[36.08622886,140.10623424];
+        let places=[]
+        title.innerHTML=year+"年"+term+weekday;
+        const showmap=async(youbi)=>{
+          try{
+            places=[];
+            let params= new URLSearchParams();
+            if (youbi){
+              params.append('youbi', youbi);
+            }
+            if (markerLayer){
+              markerLayer.clearLayers();
+            }
+            params=params.toString();
+            const url=`/map${params? '?': ''}${params}`;
+            console.log(url);
+            const response=await fetch(url);
+            
+            if (!response.ok){
+              throw new Error(`サーバーエラー: ${response.status}`);
+            }
+            const data=await response.json();
+            data.forEach(item => {
+              places.push({
+                classroomname: item.name,
+                subjectname: item.subject,
+                latitude: item.latitude,
+                longitude: item.longitude,
+                hour: item.hour
+              });
+            });
+            console.log(places);
+            if (!map){
+              map = L.map("map").setView(Tsukuba, 13); // 春日エリア
+              L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                  attribution: "&copy; OpenStreetMap contributors",
+              }).addTo(map);
+              markerLayer=L.layerGroup().addTo(map);
+              L.marker(Tsukuba).addTo(map).bindPopup("春日エリア").openPopup();
+            }
+            places.map(place=>{
+              L.marker([place.latitude, place.longitude]).addTo(markerLayer).bindPopup(place.subjectname);
+            });
+          }catch(error){
+            document.getElementById("map").innerHTML="データの取得に失敗しました";
+            console.error(error)
+          }
+        };
+        window.addEventListener("load", showmap);
+        week_id.addEventListener("change", (e)=>{
+          const youbi=e.target.value;
+          showmap(youbi);
+        })
+    </script>
+    <%= link_to "時間割へ", home_path %>
+  </body>
+</html>

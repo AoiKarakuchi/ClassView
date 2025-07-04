@@ -9,10 +9,11 @@ class Users::SessionsController < Devise::SessionsController
   # end
 
   # POST /resource/sign_in
-  # def create
-  #   super
-  # end
-
+   def create# 地図表示で追加しました
+    super do |resource|
+      flash[:just_logged_in]=true
+    end
+  end
   # DELETE /resource/sign_out
   # def destroy
   #   super

@@ -3,4 +3,7 @@ class StaticPagesController < ApplicationController
   def home
     @user = current_user
   end
+  def map
+    @user= current_user
+  end
 end
