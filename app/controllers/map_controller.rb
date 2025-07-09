@@ -28,7 +28,7 @@ class MapController < ApplicationController
 
       result= grouped.map do |classroom_name, records|
           subject = records.map(&:subject_name).uniq.join(", ")
-          hour = records.map(&:hour).uniq.join(", ")
+          hour = records.map(&:hour).uniq
         {
           name: classroom_name,
           latitude: records.first.latitude,
