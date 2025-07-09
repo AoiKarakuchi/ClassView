@@ -29,4 +29,5 @@ Rails.application.routes.draw do
   
   delete 'courses/delete_subject', to: 'courses#delete_subject'
 
+  resources :memos, only:[:create, :destroy] 
 end

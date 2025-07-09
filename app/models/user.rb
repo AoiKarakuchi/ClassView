@@ -44,5 +44,6 @@ class User < ApplicationRecord
   has_many :subjects, through: :user_regist_subjects,source: :subject
   validates :email, presence: true
   validates :name, presence: true
+  has_many :memos, foreign_key: "user_email", primary_key: "email"
 
 end

@@ -77,3 +77,6 @@ gem "omniauth-rails_csrf_protection"
 # 多言語設定
 gem "rails-i18n"
 gem "devise-i18n-views"
+
+# 天気API
+gem 'httparty'

@@ -36,6 +36,34 @@
     %>
 
     <h1 id="title">OpenStreetMap表示テスト</h1>
+    <!-- 天気は現在地の天気ではなく、入力された緯度経度(現在は春日校舎を指定)の天気が表示される -->
+    <% if @current %>
+      <h3>つくば市の現在の天気</h3>
+      <div style="margin-bottom: 1em;">
+        気温: <%= @current["main"]["temp"] %>℃<br>
+        天気: <%= @current["weather"][0]["description"] %><br>
+        <% if @current["rain"] && @current["rain"]["1h"] %>
+          直近1時間の降水量: <%= @current["rain"]["1h"] %> mm
+        <% end %>
+      </div>
+    <% else %>
+      <p>現在の天気を取得できませんでした。</p>
+    <% end %>
+
+    <% if @forecasts.present? %>
+      <h3>つくば市の天気予報</h3>
+      <% @forecasts.each do |f| %>
+        <div style="margin-bottom: 1em;">
+          <strong><%= Time.parse(f["dt_txt"]).strftime("%m/%d %H:%M") %></strong><br>
+          気温: <%= f["main"]["temp"] %>℃<br>
+          天気: <%= f["weather"][0]["description"] %><br>
+          降水確率: <%= (f["pop"] * 100).round %>%<br>
+        </div>
+      <% end %>
+    <% else %>
+      <p>天気予報のデータを取得できませんでした。</p>
+    <% end %>
+
     <select id="dayofweek">
       <% days.each do |value, name| %>
         <option value="<%= value %>" <%= 'selected' if value == today %>>
@@ -44,6 +72,24 @@
       <% end %>
     </select>
     <div id="map">読み込み中...</div>
+
+    <%@memos.each do |memo|%> 
+    <% if memo.user_email==current_user.id %> 
+      <!-- <div><%=memo.user_email%></div> -->
+      <div><%=memo.content%></div> 
+      <%= button_to '削除', "/memos/#{memo.id}", method: :delete, form: { data: { turbo: false }, id: "delete-form-#{memo.id}" } %> 
+      <hr>
+    <% end %> 
+    <% end %> 
+
+    <%= form_with model:@new_memo, local: true, id: "memo-form" do |f| %> 
+      <div class="field"> 
+        <%= f.text_area :content, placeholder: "memo" %> 
+      </div> 
+      <%= f.submit "入力" %> 
+    <% end %>
+    
+    
     <script>
         const hour="<%=DateInfo.time %>"
         const term="<%=DateInfo.semester%>";

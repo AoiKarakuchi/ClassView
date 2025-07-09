@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_27_063331) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_09_041022) do
   create_table "classrooms", force: :cascade do |t|
     t.string "name", null: false
     t.float "latitude"
@@ -18,6 +18,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_27_063331) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_classrooms_on_name", unique: true
+  end
+
+  create_table "memos", force: :cascade do |t|
+    t.text "content"
+    t.string "user_email"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_email", "created_at"], name: "index_memos_on_user_email_and_created_at"
   end
 
   create_table "subject_held_classrooms", force: :cascade do |t|
