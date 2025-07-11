@@ -8,25 +8,21 @@
   <%= form.submit "インポート" %>
 <% end %>
 
-<label for="year">年度:</label>
 <select id="year">
+  <option value="" disabled <%= "selected" unless (2022..2025).include?(DateInfo.year) %>>-- 年度を選択してください --</option>
   <% (2022..2025).each do |y| %>
-    <option value="<%= y %>" <%= "selected" if y == Time.now.year %>><%= y %>年度</option>
+    <option value="<%= y %>" <%= "selected" if y == DateInfo.year %>><%= y %>年度</option>
   <% end %>
 </select>
 
+
 <select id="term">
-    <option value="春A">春A</option>
-    <option value="春B">春B</option>
-    <option value="春C">春C</option>
-    <option value="夏季休業中">夏季休業中</option>
-    <option value="秋A">秋A</option>
-    <option value="秋B">秋B</option>
-    <option value="秋C">秋C</option>
-    <option value="春季休業中">春季休業中</option>
-    <option value="通年">通年</option>
+  <option value="" disabled <%= "selected" unless ["春A","春B","春C","夏季休業中","秋A","秋B","秋C","春季休業中","通年"].include?(DateInfo.semester) %>>-- 学期を選択してください --</option>
+  <% ["春A","春B","春C","夏季休業中","秋A","秋B","秋C","春季休業中","通年"].each do |term| %>
+    <option value="<%= term %>" <%= "selected" if term == DateInfo.semester %>><%= term %></option>
+  <% end %>
 </select>
-<h1 id="semester">春A</h1>
+<h1 id="semester">リロードしてください。</h1>
 <div id="subjects"></div>
 <table id="timetable" border="1" cellspacing="0" cellpadding="5">
   <thead>
@@ -184,8 +180,20 @@
         });
       });
   };
-  // 初期表示（今年の春A）
-showClass("春A", yearSelect.value);
+  // 初期表示（今年の現在のモジュール）
+showClass("<%= DateInfo.semester %>","<%= DateInfo.year %>");
+
+  function tryShowClass() {
+    const term = selectElement.value;
+    const year = yearSelect.value;
+
+    if (term && year) {
+      showClass(term, year);
+    }
+  }
+
+  selectElement.addEventListener('change', tryShowClass);
+  yearSelect.addEventListener('change', tryShowClass);
 
 // 学期選択変更時
 selectElement.addEventListener('change', (e) => {
@@ -202,6 +210,5 @@ yearSelect.addEventListener('change', (e) => {
 });
 
 </script>
-
 <%= link_to "地図へ", root_path %>
 
