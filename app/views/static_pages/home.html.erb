@@ -1,5 +1,4 @@
-<h1>StaticPages#home</h1>
-<p>Hello, <%= @user.name %></p>
+<% provide :title, "Home" %>
 
 <h2>履修科目のCSVインポート</h2>
 
@@ -54,6 +53,7 @@
 <h2>その他授業</h2>
 <div id="non_period_subjects"><em>該当科目がここに表示されます</em></div>
 
+<%= link_to "地図へ", root_path %>
 
 <script>
   const selectElement = document.getElementById("term");
@@ -210,5 +210,4 @@ yearSelect.addEventListener('change', (e) => {
 });
 
 </script>
-<%= link_to "地図へ", root_path %>
 

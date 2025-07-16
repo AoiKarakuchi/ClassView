@@ -1,10 +1,8 @@
 <% provide :title, "Map" %>
 
 <% content_for :head do %>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-      crossorigin=""/>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-      crossorigin=""></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
     <% if flash[:just_logged_in] %>
       <script>
         // 1回だけリロードしてセッションを有効にした状態でAPIを呼び直す

@@ -7,7 +7,10 @@
     <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
       <ul class="navbar-nav mb-2 mb-lg-0">
         <li class="nav-item">
-          <%= link_to "Home", root_path, class: "nav-link active"%>
+          <%= link_to "Map", root_path, class: "nav-link active"%>
+        </li>
+        <li class="nav-item">
+          <%= link_to "Timetable", home_path, class: "nav-link" %>
         </li>
         <% if user_signed_in? %>
           <li class="nav-item">
@@ -15,7 +18,7 @@
           </li>
         <% else %>
           <li class="nav-item">
-            <%= link_to "Log in", new_user_session_path, class: "nav-link" %>           
+            <%= link_to "Log in", new_user_session_path, class: "nav-link" %>          
           </li>
           <li class="nav-item">
             <%= link_to "Sign up", new_user_registration_path, class: "nav-link" %>
