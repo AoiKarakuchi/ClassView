@@ -109,7 +109,6 @@ CSV.foreach("db/subjects.csv", headers: true) do |row|
           SubjectOpenTimetable.find_or_create_by(
             subject_number: subject_number,
             timetable_id: timetable.id,
-            
             year: year
           )
         end

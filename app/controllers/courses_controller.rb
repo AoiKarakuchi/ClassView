@@ -15,13 +15,13 @@ class CoursesController < ApplicationController
       user_subject_numbers = user.subjects.pluck(:number)
       # Timetableとsubjectを結合
       timetables = Timetable.joins(:subject_open_timetables)
-      # ログインしたアカウントの履修した授業番号と選択した学期を元に絞り込み
-                            .where(subject_open_timetables: {subject_number: user_subject_numbers, year: year}, semester: semester)
-      # 重複を取り除く
+                            # ログインしたアカウントの履修した授業番号と選択した学期を元に絞り込み
+                            .where(subject_open_timetables: { subject_number: user_subject_numbers, year: year }, semester: semester)
+                            # 重複を取り除く
                             .distinct
 
-      #詳しいデバッグ用ログ
-      #debugger
+      # 詳しいデバッグ用ログ
+      # debugger
       Rails.logger.debug "Timetables count: #{timetables.count}"
       Rails.logger.debug "Timetables semesters: #{timetables.pluck(:semester).uniq}"
       # home.html.erbに渡すデータ
@@ -46,7 +46,7 @@ class CoursesController < ApplicationController
     end
   end
 
-  #授業の削除
+  # 授業の削除
   def delete_subject
     semester = params[:term]
     subject_number = params[:number]
@@ -64,5 +64,4 @@ class CoursesController < ApplicationController
       render json: { success: false, error: e.message }, status: 500
     end
   end
-
 end

@@ -1,39 +1,84 @@
-<h2>Sign up</h2>
+<% provide :title, "Sign up"%>
+<div class="container">
+  <div class="row">
+    <div class="col-lg-10 col-xl-9 mx-auto">
+      <div class="card flex-row my-5 border-0 shadow rounded-3 overflow-hidden">
+        <div class="card-body p-4 p-sm-5">
+          <h2 class="card-title text-center mb-5 fw-light fs-5">Sign up</h2>
+          <%= form_with model: @user, url: user_registration_path, local: true do |f| %>
+            <% if params[:from_omniauth_callback] %>
+              <p>ユーザーネームとメールアドレスを入力してください。</p>
+            <% else %>
+              <% name_error = @user.errors[:name].any? %>
+              <% email_error = @user.errors[:email].any? %>
+              <% password_error = @user.errors[:password].any? %>
+              <% password_confirmation_error = @user.errors[:password_confirmation].any? %>
+            <% end %>
 
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
+            <%# ユーザーネームを入力するフォーム %>
+            <div class="form-floating mb-3">
+              <%= f.text_field :name, autofocus: true, autocomplete: "name", class: "form-control #{'is-invalid' if name_error}", id: "floatingInputUsername" %>
+              <label for="floatingInputUsername">Username</label>
+              <% if name_error %>
+                <div class="invalid-feedback">
+                  Username <%= @user.errors.messages[:name].first %>
+                </div>
+              <% end %>
+            </div>
+            <div class="form-floating mb-3">
+              <%= f.email_field :email, autocomplete: "email", class: "form-control #{'is-invalid' if email_error}", id: "floatingInputEmail" %>
+              <label for="floatingInputEmail">Email address</label>
+              <% if email_error %>
+                <div class="invalid-feedback">
+                  Email <%= @user.errors.messages[:email].first %>
+                </div>
+              <% end %>
+            </div>
 
-  <% if params[:from_omniauth_callback] %>
-    <p>ユーザーネームとメールアドレスが必要です。</p>
-  <% end %>
+            <hr>
 
-  <%# ユーザーネームを入力するフォーム %>
-  <div class="field">
-    <%= f.label :name %><br>
-    <%= f.text_field :name %>
-  </div>
+            <% if f.object.password_required? %>
+              <div class="form-floating mb-3">
+                <%= f.password_field :password, autocomplete: "new-password", class: "form-control #{'is-invalid' if password_error}", id: "floatingPassword" %>
+                <label for="floatingPassword">Password(8文字以上20文字以下)</label>
+                <% if password_error %>
+                  <div class="invalid-feedback">
+                    Password <%= @user.errors.messages[:password].first %>
+                  </div>
+                <% end %>
+              </div>
 
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
-  </div>
+              <div class="form-floating mb-3">
+                <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "form-control #{'is-invalid' if password_confirmation_error}", id: "floatingPasswordConfirm" %>
+                <label for="floatingPasswordConfirm">Password Confirmation</label>
+                <% if password_confirmation_error %>
+                  <div class="invalid-feedback">
+                    Password Confirmation<%= @user.errors.messages[:password_confirmation].first %>
+                  </div>
+                <% end %>
+              </div>
+            <% else %>
+              <fieldset disabled>
+                <div class="form-floating mb-3">
+                  <%= f.password_field :password, autocomplete: "new-password", class: 'form-control', id: "floatingPassword" %>
+                  <label for="floatingPassword">Password(8文字以上20文字以下)</label>
+                </div>
 
-  <% if f.object.password_required? %>
-    <div class="field">
-      <%= f.label :password %>
-      <% if @minimum_password_length %>
-        <em>(<%= @minimum_password_length %> 文字以上)</em>
-      <% end %><br>
-      <%= f.password_field :password, autocomplete: "new-password" %>
+                <div class="form-floating mb-3">
+                  <%= f.password_field :password_confirmation, autocomplete: "new-password", class: 'form-control', id: "floatingPasswordConfirm" %>
+                  <label for="floatingPasswordConfirm">Password Confirmation</label>
+                </div>  
+              </fieldset>
+            <% end %>
+
+            <div class="d-grid mb-2">
+              <%= f.submit "Sign up", class: "btn btn-lg btn-primary fw-bold text-uppercase" %>
+            </div>
+
+            <%= link_to "Have an account? Log In", new_user_session_path, class: "d-block text-center mt-2 small"%>
+          <% end %>          
+        </div>
+      </div>
     </div>
-
-    <div class="field">
-      <%= f.label :password_confirmation %><br>
-      <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
-    </div>
-  <% end %>
-
-  <div class="actions">
-    <%= f.submit "アカウントを作る" %>
   </div>
-<% end %>
+</div>

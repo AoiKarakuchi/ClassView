@@ -9,7 +9,7 @@ class Users::SessionsController < Devise::SessionsController
   # end
 
   # POST /resource/sign_in
-   def create# 地図表示で追加しました
+  def create# 地図表示で追加しました
     super do |resource|
       flash[:just_logged_in]=true
     end

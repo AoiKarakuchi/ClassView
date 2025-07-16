@@ -79,4 +79,8 @@ gem "rails-i18n"
 gem "devise-i18n-views"
 
 # 天気API
-gem 'httparty'
+gem "httparty"
+
+# bootstrap導入用
+gem "dartsass-rails", "~> 0.5.1"
+gem "bootstrap", "~> 5.3", ">= 5.3.5"

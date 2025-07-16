@@ -1,0 +1,22 @@
+.social-form {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+
+    img {
+        width: 96px;
+        height: 96px;
+        border-radius: 50%;
+        transition: transform 0.2s ease-in-out;
+
+        &:hover {
+        transform: scale(1.05);
+        }
+    }
+}
+
+.text-center {
+    margin-top: 1rem;
+    font-size: 0.8rem;
+    color: $gray-600;
+}

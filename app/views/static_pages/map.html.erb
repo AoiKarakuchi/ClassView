@@ -1,23 +1,10 @@
-<!DOCTYPE html>
-<%# 全体的に変更 %>
-<html>
-  <head>
-    <title>Leaflet Map with OpenStreetMap</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<% provide :title, "Map" %>
 
+<% content_for :head do %>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
       crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
       crossorigin=""></script>
-    <style>
-      #map {
-        height: 500px;
-        width: 100%;
-      }
-    </style>
-  </head>
-
-  <body>
     <% if flash[:just_logged_in] %>
       <script>
         // 1回だけリロードしてセッションを有効にした状態でAPIを呼び直す
@@ -29,164 +16,163 @@
         }
       </script>
     <% end %>
+<% end %>
 
-    <% 
-      days = { "月" => "月曜日", "火" => "火曜日", "水" => "水曜日", "木" => "木曜日", "金" => "金曜日" }
-      today = DateInfo.weekday 
-    %>
+<% 
+  days = { "月" => "月曜日", "火" => "火曜日", "水" => "水曜日", "木" => "木曜日", "金" => "金曜日" }
+  today = DateInfo.weekday 
+%>
 
-    <h1 id="title">OpenStreetMap表示テスト</h1>
-    <!-- 天気は現在地の天気ではなく、入力された緯度経度(現在は春日校舎を指定)の天気が表示される -->
-    <% if @current %>
-      <h3>つくば市の現在の天気</h3>
-      <div style="margin-bottom: 1em;">
-        気温: <%= @current["main"]["temp"] %>℃<br>
-        天気: <%= @current["weather"][0]["description"] %><br>
-        <% if @current["rain"] && @current["rain"]["1h"] %>
-          直近1時間の降水量: <%= @current["rain"]["1h"] %> mm
-        <% end %>
-      </div>
-    <% else %>
-      <p>現在の天気を取得できませんでした。</p>
+<h1 id="title">OpenStreetMap表示テスト</h1>
+<!-- 天気は現在地の天気ではなく、入力された緯度経度(現在は春日校舎を指定)の天気が表示される -->
+<% if @current %>
+  <h3>つくば市の現在の天気</h3>
+  <div style="margin-bottom: 1em;">
+    気温: <%= @current["main"]["temp"] %>℃<br>
+    天気: <%= @current["weather"][0]["description"] %><br>
+    <% if @current["rain"] && @current["rain"]["1h"] %>
+      直近1時間の降水量: <%= @current["rain"]["1h"] %> mm
     <% end %>
+  </div>
+<% else %>
+  <p>現在の天気を取得できませんでした。</p>
+<% end %>
 
-    <% if @forecasts.present? %>
-      <h3>つくば市の天気予報</h3>
-      <% @forecasts.each do |f| %>
-        <div style="margin-bottom: 1em;">
-          <strong><%= Time.parse(f["dt_txt"]).strftime("%m/%d %H:%M") %></strong><br>
-          気温: <%= f["main"]["temp"] %>℃<br>
-          天気: <%= f["weather"][0]["description"] %><br>
-          降水確率: <%= (f["pop"] * 100).round %>%<br>
-        </div>
-      <% end %>
-    <% else %>
-      <p>天気予報のデータを取得できませんでした。</p>
-    <% end %>
+<% if @forecasts.present? %>
+  <h3>つくば市の天気予報</h3>
+  <% @forecasts.each do |f| %>
+    <div style="margin-bottom: 1em;">
+      <strong><%= Time.parse(f["dt_txt"]).strftime("%m/%d %H:%M") %></strong><br>
+      気温: <%= f["main"]["temp"] %>℃<br>
+      天気: <%= f["weather"][0]["description"] %><br>
+      降水確率: <%= (f["pop"] * 100).round %>%<br>
+    </div>
+  <% end %>
+<% else %>
+  <p>天気予報のデータを取得できませんでした。</p>
+<% end %>
 
-    <select id="dayofweek">
-      <% days.each do |value, name| %>
-        <option value="<%= value %>" <%= 'selected' if value == today %>>
-          <%= name %>
-        </option>
-      <% end %>
-    </select>
-    
-    <div id="map">読み込み中...</div>
+<select id="dayofweek">
+  <% days.each do |value, name| %>
+    <option value="<%= value %>" <%= 'selected' if value == today %>>
+      <%= name %>
+    </option>
+  <% end %>
+</select>
 
-    <% @memos.each do |memo| %> 
-      <% if memo.user_email == current_user.id %> 
-        <!-- <div><%= memo.user_email %></div> -->
-        <div><%= memo.content %></div> 
-        <%= button_to '削除', "/memos/#{memo.id}", method: :delete, form: { data: { turbo: false }, id: "delete-form-#{memo.id}" } %> 
-        <hr>
-      <% end %> 
-    <% end %> 
+<div id="map">読み込み中...</div>
 
-    <%= form_with model: @new_memo, local: true, id: "memo-form" do |f| %> 
-      <div class="field"> 
-        <%= f.text_area :content, placeholder: "memo" %> 
-      </div> 
-      <%= f.submit "入力" %> 
-    <% end %>
+<% @memos.each do |memo| %> 
+  <% if memo.user_email == current_user.id %> 
+    <!-- <div><%= memo.user_email %></div> -->
+    <div><%= memo.content %></div> 
+    <%= button_to '削除', "/memos/#{memo.id}", method: :delete, form: { data: { turbo: false }, id: "delete-form-#{memo.id}" } %> 
+    <hr>
+  <% end %> 
+<% end %> 
 
-    <script>
-      const hour = "<%= DateInfo.time %>";
-      const term = "<%= DateInfo.semester %>";
-      const weekday = "<%= DateInfo.weekday %>";
-      const year = "<%= DateInfo.year %>";
-      const title = document.getElementById("title");
-      const week_id = document.getElementById("dayofweek");
-      const showbutton = document.getElementById("show");
-      let map;
-      let markerLayer;
-      const Tsukuba = [36.08622886, 140.10623424];
-      let places = [];
+<%= form_with model: @new_memo, local: true, id: "memo-form" do |f| %> 
+  <div class="field"> 
+    <%= f.text_area :content, placeholder: "memo" %> 
+  </div> 
+  <%= f.submit "入力" %> 
+<% end %>
 
-      title.innerHTML = year + "年" + term + weekday;
+<%= link_to "時間割へ", home_path %>
 
-      const showmap = async (youbi) => {
-        try {
-          places = [];
-          let params = new URLSearchParams();
-          if (youbi) {
-            params.append('youbi', youbi);
-          }
-          if (markerLayer) {
-            markerLayer.clearLayers();
-          }
-          params = params.toString();
-          const url = `/map${params ? '?' : ''}${params}`;
-          console.log(url);
-          const response = await fetch(url);
+<script>
+  const hour = "<%= DateInfo.time %>";
+  const term = "<%= DateInfo.semester %>";
+  const weekday = "<%= DateInfo.weekday %>";
+  const year = "<%= DateInfo.year %>";
+  const title = document.getElementById("title");
+  const week_id = document.getElementById("dayofweek");
+  const showbutton = document.getElementById("show");
+  let map;
+  let markerLayer;
+  const Tsukuba = [36.08622886, 140.10623424];
+  let places = [];
 
-          if (!response.ok) {
-            throw new Error(`サーバーエラー: ${response.status}`);
-          }
+  title.innerHTML = year + "年" + term + weekday;
 
-          const data = await response.json();
-          data.forEach(item => {
-            places.push({
-              classroomname: item.name,
-              subjectname: item.subject,
-              latitude: item.latitude,
-              longitude: item.longitude,
-              hour: item.hour
-            });
-          });
+  const showmap = async (youbi) => {
+    try {
+      places = [];
+      let params = new URLSearchParams();
+      if (youbi) {
+        params.append('youbi', youbi);
+      }
+      if (markerLayer) {
+        markerLayer.clearLayers();
+      }
+      params = params.toString();
+      const url = `/map${params ? '?' : ''}${params}`;
+      console.log(url);
+      const response = await fetch(url);
 
-          // 時限に応じてマーカーの色を変える
-          // マーカーの定義
-          const Icon = L.Icon.extend({
-            options: {
-              iconSize: [25, 30],
-              iconAnchor: [12.5, 30],
-              popupAnchor: [0, -20]
-            }
-          });
+      if (!response.ok) {
+        throw new Error(`サーバーエラー: ${response.status}`);
+      }
 
-          const blueIcon = new Icon({ iconUrl: '<%= asset_path('blue_marker.png') %>' });
-          const redIcon = new Icon({ iconUrl: '<%= asset_path('red_marker.png') %>' });
-
-          if (!map) {
-            map = L.map("map").setView(Tsukuba, 18); // 春日エリア
-            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-              attribution: "&copy; OpenStreetMap contributors",
-            }).addTo(map);
-            markerLayer = L.layerGroup().addTo(map);
-            // L.marker(Tsukuba, {icon: redIcon}).addTo(map).bindPopup("春日エリア").openPopup();
-          }
-
-          places.map(place => {
-            let isHourInclude;
-            if (Array.isArray(place.hour)) {
-              isHourInclude = place.hour.some(h => Number(h) == hour);
-            } else {
-              if (Number(place.hour) == hour) {
-                isHourInclude = true;
-              } else {
-                isHourInclude = false;
-              }
-            }
-
-            if (isHourInclude) {
-              L.marker([place.latitude, place.longitude], { icon: redIcon }).addTo(markerLayer).bindPopup(place.subjectname);
-            } else {
-              L.marker([place.latitude, place.longitude], { icon: blueIcon }).addTo(markerLayer).bindPopup(place.subjectname);
-            }
-          });
-        } catch (e) {
-          console.error("地図表示中にエラー:", e);
-        }
-      };
-
-      window.addEventListener("load", () => showmap());
-      week_id.addEventListener("change", (e) => {
-        const youbi = e.target.value;
-        showmap(youbi);
+      const data = await response.json();
+      data.forEach(item => {
+        places.push({
+          classroomname: item.name,
+          subjectname: item.subject,
+          latitude: item.latitude,
+          longitude: item.longitude,
+          hour: item.hour
+        });
       });
-    </script>
 
-    <%= link_to "時間割へ", home_path %>
-  </body>
-</html>
+      // 時限に応じてマーカーの色を変える
+      // マーカーの定義
+      const Icon = L.Icon.extend({
+        options: {
+          iconSize: [25, 30],
+          iconAnchor: [12.5, 30],
+          popupAnchor: [0, -20]
+        }
+      });
+
+      const blueIcon = new Icon({ iconUrl: '<%= asset_path('blue_marker.png') %>' });
+      const redIcon = new Icon({ iconUrl: '<%= asset_path('red_marker.png') %>' });
+
+      if (!map) {
+        map = L.map("map").setView(Tsukuba, 18); // 春日エリア
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: "&copy; OpenStreetMap contributors",
+        }).addTo(map);
+        markerLayer = L.layerGroup().addTo(map);
+        // L.marker(Tsukuba, {icon: redIcon}).addTo(map).bindPopup("春日エリア").openPopup();
+      }
+
+      places.map(place => {
+        let isHourInclude;
+        if (Array.isArray(place.hour)) {
+          isHourInclude = place.hour.some(h => Number(h) == hour);
+        } else {
+          if (Number(place.hour) == hour) {
+            isHourInclude = true;
+          } else {
+            isHourInclude = false;
+          }
+        }
+
+        if (isHourInclude) {
+          L.marker([place.latitude, place.longitude], { icon: redIcon }).addTo(markerLayer).bindPopup(place.subjectname);
+        } else {
+          L.marker([place.latitude, place.longitude], { icon: blueIcon }).addTo(markerLayer).bindPopup(place.subjectname);
+        }
+      });
+    } catch (e) {
+      console.error("地図表示中にエラー:", e);
+    }
+  };
+
+  window.addEventListener("load", () => showmap());
+  week_id.addEventListener("change", (e) => {
+    const youbi = e.target.value;
+    showmap(youbi);
+  });
+</script>
