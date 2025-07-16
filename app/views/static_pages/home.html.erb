@@ -195,19 +195,19 @@ showClass("<%= DateInfo.semester %>","<%= DateInfo.year %>");
   selectElement.addEventListener('change', tryShowClass);
   yearSelect.addEventListener('change', tryShowClass);
 
-// 学期選択変更時
-selectElement.addEventListener('change', (e) => {
-  const term = e.target.value;
-  const year = yearSelect.value;
-  showClass(term, year);
-});
+  // 学期選択変更時
+  selectElement.addEventListener('change', (e) => {
+    const term = e.target.value;
+    const year = yearSelect.value;
+    showClass(term, year);
+  });
 
-// 年度選択変更時
-yearSelect.addEventListener('change', (e) => {
-  const year = e.target.value;
-  const term = selectElement.value;
-  showClass(term, year);
-});
+  // 年度選択変更時
+  yearSelect.addEventListener('change', (e) => {
+    const year = e.target.value;
+    const term = selectElement.value;
+    showClass(term, year);
+  });
 
 </script>
 
