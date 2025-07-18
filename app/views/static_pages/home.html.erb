@@ -1,57 +1,75 @@
 <% provide :title, "Home" %>
 
-<h2>履修科目のCSVインポート</h2>
+<div class="form-group">
+  <label for="year">年度:</label>
+  <select id="year">
+    <% (2022..2025).each do |y| %>
+      <option value="<%= y %>" <%= "selected" if y == Time.now.year %>><%= y %>年度</option>
+    <% end %>
+  </select>
 
-<%= form_with url: import_user_regist_subjects_path, local: true, multipart: true do |form| %>
-  <%= form.file_field :file %>
-  <%= form.submit "インポート" %>
-<% end %>
+  <select id="term">
+      <option value="春A">春A</option>
+      <option value="春B">春B</option>
+      <option value="春C">春C</option>
+      <option value="夏季休業中">夏季休業中</option>
+      <option value="秋A">秋A</option>
+      <option value="秋B">秋B</option>
+      <option value="秋C">秋C</option>
+      <option value="春季休業中">春季休業中</option>
+      <option value="通年">通年</option>
+  </select>
+</div>
 
-<select id="year">
-  <option value="" disabled <%= "selected" unless (2022..2025).include?(DateInfo.year) %>>-- 年度を選択してください --</option>
-  <% (2022..2025).each do |y| %>
-    <option value="<%= y %>" <%= "selected" if y == DateInfo.year %>><%= y %>年度</option>
-  <% end %>
-</select>
-
-
-<select id="term">
-  <option value="" disabled <%= "selected" unless ["春A","春B","春C","夏季休業中","秋A","秋B","秋C","春季休業中","通年"].include?(DateInfo.semester) %>>-- 学期を選択してください --</option>
-  <% ["春A","春B","春C","夏季休業中","秋A","秋B","秋C","春季休業中","通年"].each do |term| %>
-    <option value="<%= term %>" <%= "selected" if term == DateInfo.semester %>><%= term %></option>
-  <% end %>
-</select>
-<h1 id="semester">リロードしてください。</h1>
-<div id="subjects"></div>
+<h1 id="semester">春A</h1>
 <table id="timetable" border="1" cellspacing="0" cellpadding="5">
   <thead>
     <tr>
-      <th>時限＼曜日</th>
+      <th></th>
       <th>月</th>
       <th>火</th>
       <th>水</th>
       <th>木</th>
       <th>金</th>
-      <th>土</th>
+      <th class="sat">土</th>
     </tr>
   </thead>
   <tbody>
     <!-- 1限〜6限の行を作る -->
     <% (1..8).each do |period| %>
-      <tr>
-        <td><%= period %>限</td>
+      <tr class="<%= 'extra' if period >= 7 %>">
+        <td><%= period %></td>
         <td data-day="月" data-period="<%= period %>"></td>
         <td data-day="火" data-period="<%= period %>"></td>
         <td data-day="水" data-period="<%= period %>"></td>
         <td data-day="木" data-period="<%= period %>"></td>
         <td data-day="金" data-period="<%= period %>"></td>
-        <td data-day="土" data-period="<%= period %>"></td>
+        <td class="sat" data-day="土" data-period="<%= period %>"></td>
       </tr>
     <% end %>
   </tbody>
 </table>
-<h2>その他授業</h2>
-<div id="non_period_subjects"><em>該当科目がここに表示されます</em></div>
+<div class="toggle-buttons">
+  <button onclick="toggleSaturday()">土曜日 表示切替</button>
+  <button onclick="toggleExtra()">7・8限 表示切替</button>
+</div>
+<br>
+<h4>その他授業</h4>
+<div id="non_period_subjects"><em>該当科目がここに表示されます</em></div><br>
+<div id="subjects"></div>
+<br>
+<div class="import-form">
+  <h4>履修科目のCSVインポート</h4>
+
+  <%= form_with url: import_user_regist_subjects_path, local: true, multipart: true do |form| %>
+    <div class="custom-file-input">
+      <%= form.file_field :file, id: "csv_file", style: "display: none;" %>
+      <label for="csv_file">ファイルを選択</label>
+      <span id="file-name" style="margin-left: 1em; color: #666;"></span>
+      <%= form.submit "インポート", class: "toggle-button" %>
+    </div>
+  <% end %>
+</div>
 
 <script>
   const selectElement = document.getElementById("term");
