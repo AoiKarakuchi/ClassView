@@ -2,3 +2,398 @@
 @import "bootstrap";
 @import "base";
 @import "components/login";
+
+:root {
+    --main-color: #E6E5EF;
+    --background-color: #F5F5F9;
+    --mozi-color: #666;
+}
+
+body {
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    background-color: var(--background-color);
+    color: #666;
+    margin: 20px;
+}
+
+form {
+    margin-bottom: 2em;
+}
+
+input[type="file"] {
+    padding: 5px;
+}
+
+input[type="submit"] {
+    background-color: #3498db;
+    border: none;
+    color: var(--background-color);
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+input[type="submit"]:hover {
+    background-color: #2980b9;
+}
+
+select {
+    padding: 5px;
+    margin-right: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+#semester {
+    font-size: 1.5em;
+    color: var(--mozi-color);
+    text-align: center;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+#timetable {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 8px;
+    font-size: 0.85em;
+    border: none;
+}
+
+#timetable th {
+    background-color: var(--main-color);
+    color: var(--mozi-color);
+    padding: 8px;
+    text-align: center;
+    font-size: 0.85em;
+}
+
+#timetable td {
+    padding: 6px;
+    text-align: center;
+    border: 2px solid var(--background-color);
+    height: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.8em;
+}
+
+#timetable th:first-child,
+#timetable td:first-child {
+    background-color: var(--background-color);
+    border: none;
+    width: 50px;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 0.75em;
+}
+
+#timetable td[data-day]:hover {
+    background-color: #ecf0f1;
+    cursor: pointer;
+}
+
+#non_period_subjects {
+    padding: 10px;
+    border: 1px dashed #999;
+    background-color: var(--background-color);
+    margin-top: 1em;
+}
+
+#non_period_subjects em {
+    color: #7f8c8d;
+}
+
+button {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #e0e0e0;
+}
+
+.toggle-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.hide {
+    display: none;
+}
+
+.form-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
+    align-items: center;
+    margin: 1em 0;
+}
+
+.form-group label {
+    color: #666;
+}
+
+.form-group select option {
+    color: #666;
+}
+
+select {
+    padding: 0.5em;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    color: #666;
+    background-color: #f9f9f9;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: border 0.2s;
+}
+
+select:focus {
+    border-color: #007BFF;
+    outline: none;
+    background-color: #fff;
+}
+
+th, td, small, label, h1, h4, button {
+    color: inherit;
+}
+
+@media (max-width: 768px) {
+    body {
+        font-size: 0.7em;
+    }
+
+    #timetable {
+        margin-left: 0;
+        margin-right: auto;
+        font-size: 0.85em;
+    }
+
+    #timetable th {
+        font-size: 0.75em;
+    }
+
+    #timetable td:first-child,
+    #timetable th:first-child {
+        width: 25px;
+        font-size: 0.75em;
+        padding: 4px 6px;
+    }
+
+    #timetable td {
+        text-align: left;
+        padding-left: 6px;
+        padding: 4px;
+        height: 80px;
+        line-height: 1.1em;
+        font-size: 1.2em;
+    }
+
+    select#year, select#term {
+        font-size: 0.75em;
+        padding: 4px 6px;
+        min-width: 80px;
+        margin-right: 8px;
+    }
+
+    #semester {
+        font-size: 1em;
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
+    }
+
+    .toggle-buttons button {
+        font-size: 0.75em;
+        padding: 4px 8px;
+    }
+
+    h4 {
+        font-size: 0.9em;
+    }
+
+    #non_period_subjects,
+    #non_period_subjects *,
+    #subjects,
+    #subjects * {
+        font-size: 0.75em;
+    }
+}
+
+#map {
+    position: fixed;
+    top: 0%;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+}
+.weather-container {
+    position: fixed;
+    top: 5%;
+    left: 6%;
+    width: 52%;
+    z-index: 1000;
+    max-height: 30%;
+    overflow-y: auto;
+    background-color: rgba(255, 255, 255, 0.8);
+    color: #4a4a4a;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    width: 50%;
+    padding: 1em;
+    box-sizing: border-box;
+    border-radius: 8px;
+    font-size: 0.85rem;
+}
+
+.forecast-scroll {
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-top: 1rem;
+}
+
+.forecast-item {
+    display: inline-block;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 0.5rem;
+    border-radius: 6px;
+    margin-right: 0.5rem;
+    min-width: 100px;
+    text-align: center;
+}
+
+.weather-icon {
+    width: 40px;
+    height: 40px;
+}
+
+.current-temp {
+    font-size: 2rem;
+    font-weight: bold;
+}
+.memo-box {
+    position: fixed;
+    top: 5%;
+    right: 7%;
+    width: 35%;
+    max-height: 30%;
+    overflow-y: auto;
+    z-index: 1000;
+    background-color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 1em;
+    box-sizing: border-box;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.memo-box form button {
+    font-size: 12px;
+    padding: 2px 6px;
+}
+
+.memo-box ul {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 0.5em;
+}
+
+.memo-box li {
+    margin-bottom: 0.3em;
+}
+
+.memo-form textarea {
+    resize: none;
+}
+
+.location-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    padding: 10px 15px;
+    font-size: 14px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 1px solid #888;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.forecast-box {
+    display: none;
+}
+
+@media screen and (max-width: 600px) {
+    #map {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        z-index: 1;
+    }
+
+    .weather-container {
+        position: fixed;
+        top: 2%;
+        left: 4%;
+        width: 92%;
+        max-height: 35%;
+        overflow-y: auto;
+        z-index: 1000;
+        border-radius: 8px;
+        padding: 0.8em 1em;
+        box-sizing: border-box;
+        font-size: 0.85rem;
+    }
+
+    .memo-box {
+        position: fixed;
+        top: auto;
+        bottom: 5%;
+        left: 4%;
+        width: 92%;
+        max-height: 20%;
+        overflow-y: auto;
+        z-index: 1000;
+        border-radius: 8px;
+        padding: 0.8em 1em;
+        box-sizing: border-box;
+        font-size: 13px;
+        font-size: 0.85rem;
+    }
+
+    .forecast-scroll {
+        padding-top: 0.5rem;
+    }
+
+    .weather-icon {
+        width: 30px;
+        height: 30px;
+    }
+
+    .current-temp {
+        font-size: 1.6rem;
+    }
+
+    .location-button {
+        position: fixed;
+        bottom: 10px;
+        bottom: 5px;
+        right: -30px;
+        transform: translateX(-50%);
+        z-index: 1000;
+        padding: 8px 12px;
+        font-size: 13px;
+        border-radius: 6px;
+    }
+}

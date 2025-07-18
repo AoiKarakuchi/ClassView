@@ -53,8 +53,6 @@
 <h2>その他授業</h2>
 <div id="non_period_subjects"><em>該当科目がここに表示されます</em></div>
 
-<%= link_to "地図へ", root_path %>
-
 <script>
   const selectElement = document.getElementById("term");
   const yearSelect = document.getElementById("year");
@@ -180,8 +178,9 @@
         });
       });
   };
+
   // 初期表示（今年の現在のモジュール）
-showClass("<%= DateInfo.semester %>","<%= DateInfo.year %>");
+  showClass("<%= DateInfo.semester %>","<%= DateInfo.year %>");
 
   function tryShowClass() {
     const term = selectElement.value;
@@ -209,5 +208,38 @@ showClass("<%= DateInfo.semester %>","<%= DateInfo.year %>");
     showClass(term, year);
   });
 
+  // 土曜日と7・8限の表示切替機能
+  function toggleSaturday() {
+    document.querySelectorAll('.sat').forEach(el => {
+      el.classList.toggle('hide');
+    });
+    // 保存
+    const isHidden = document.querySelector('.sat').classList.contains('hide');
+    localStorage.setItem('hideSaturday', isHidden);
+  }
+
+  function toggleExtra() {
+    document.querySelectorAll('.extra').forEach(el => {
+      el.classList.toggle('hide');
+    });
+    // 保存
+    const isHidden = document.querySelector('.extra').classList.contains('hide');
+    localStorage.setItem('hideExtra', isHidden);
+  }
+
+  // 読み込み時に状態を復元
+  document.addEventListener('DOMContentLoaded', () => {
+    if (localStorage.getItem('hideSaturday') === 'true') {
+      document.querySelectorAll('.sat').forEach(el => {
+        el.classList.add('hide');
+      });
+    }
+
+    if (localStorage.getItem('hideExtra') === 'true') {
+      document.querySelectorAll('.extra').forEach(el => {
+        el.classList.add('hide');
+      });
+    }
+  });
 </script>
 

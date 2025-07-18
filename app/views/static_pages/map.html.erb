@@ -21,62 +21,88 @@
   today = DateInfo.weekday 
 %>
 
-<h1 id="title">OpenStreetMap表示テスト</h1>
-<!-- 天気は現在地の天気ではなく、入力された緯度経度(現在は春日校舎を指定)の天気が表示される -->
-<% if @current %>
-  <h3>つくば市の現在の天気</h3>
-  <div style="margin-bottom: 1em;">
-    気温: <%= @current["main"]["temp"] %>℃<br>
-    天気: <%= @current["weather"][0]["description"] %><br>
-    <% if @current["rain"] && @current["rain"]["1h"] %>
-      直近1時間の降水量: <%= @current["rain"]["1h"] %> mm
-    <% end %>
-  </div>
-<% else %>
-  <p>現在の天気を取得できませんでした。</p>
-<% end %>
-
-<% if @forecasts.present? %>
-  <h3>つくば市の天気予報</h3>
-  <% @forecasts.each do |f| %>
-    <div style="margin-bottom: 1em;">
-      <strong><%= Time.parse(f["dt_txt"]).strftime("%m/%d %H:%M") %></strong><br>
-      気温: <%= f["main"]["temp"] %>℃<br>
-      天気: <%= f["weather"][0]["description"] %><br>
-      降水確率: <%= (f["pop"] * 100).round %>%<br>
-    </div>
-  <% end %>
-<% else %>
-  <p>天気予報のデータを取得できませんでした。</p>
-<% end %>
-
-<select id="dayofweek">
-  <% days.each do |value, name| %>
-    <option value="<%= value %>" <%= 'selected' if value == today %>>
-      <%= name %>
-    </option>
-  <% end %>
-</select>
-
 <div id="map">読み込み中...</div>
 
-<% @memos.each do |memo| %> 
-  <% if memo.user_email == current_user.id %> 
-    <!-- <div><%= memo.user_email %></div> -->
-    <div><%= memo.content %></div> 
-    <%= button_to '削除', "/memos/#{memo.id}", method: :delete, form: { data: { turbo: false }, id: "delete-form-#{memo.id}" } %> 
-    <hr>
-  <% end %> 
-<% end %> 
+<div class="weather-container">
+  <button class="btn btn-primary btn-sm mb-2" onclick="toggleWeather()">表示切替</button>
+  
+  <div id="weather-content" style="display: block;">
+    <% if @current %>
+      <div class>
+        <div class="d-flex justify-content-center align-items-center gap-3 flex-wrap">
+          <% icon_code = @current["weather"][0]["icon"] %>
+          <img src="https://openweathermap.org/img/wn/<%= icon_code %>@2x.png" alt="天気アイコン" class="weather-icon">
+          <div class="current-temp"><%= @current["main"]["temp"].round %>℃</div>
+          <div>
+            <div>湿度: <%= @current["main"]["humidity"] %>%</div>
+            <div>風速: <%= @current["wind"]["speed"] %> m/s</div>
+            <% if @current["rain"] && @current["rain"]["1h"] %>
+              <div>直近1時間の降水量: <%= @current["rain"]["1h"] %> mm</div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% else %>
+      <p class="text-danger">現在の天気を取得できませんでした。</p>
+    <% end %>
 
-<%= form_with model: @new_memo, local: true, id: "memo-form" do |f| %> 
-  <div class="field"> 
-    <%= f.text_area :content, placeholder: "memo" %> 
-  </div> 
-  <%= f.submit "入力" %> 
-<% end %>
+    <% if @forecasts.present? %>
+      <div>
+        <div class="forecast-scroll">
+          <% count = 0 %>
+          <% now = Time.current %>
+          <% @forecasts.each do |f| %>
+            <% forecast_time = Time.parse(f["dt_txt"]) %>
+            <% next if forecast_time < now %>
+            <% break if count >= 10 %>
+            <% icon = f["weather"][0]["icon"] %>
+            <div class="forecast-item">
+              <div><%= forecast_time.strftime("%H:%M") %></div>
+              <img src="https://openweathermap.org/img/wn/<%= icon %>@2x.png" alt="天気" class="weather-icon">
+              <div><%= f["main"]["temp"].round %>℃</div>
+              <div style="font-size: 0.8em;"></div>
+            </div>
+            <% count += 1 %>
+          <% end %>
+        </div>
+      </div>
+    <% else %>
+      <p class="text-danger">天気予報のデータを取得できませんでした。</p>
+    <% end %>
+  </div>
+</div>
+    
+<!-- 正確には初期表示に戻るボタン -->
+<button class="location-button" onclick="location.reload()">現在地に戻る</button>
+  
+<div class="memo-box">
+  <button class="btn btn-primary btn-sm mb-2" onclick="toggleMemos()">表示切替</button>
 
-<%= link_to "時間割へ", home_path %>
+  <div id="memo-container" style="display: block;">
+    <div id="memo-list">
+      <ul>
+        <% @memos.each do |memo| %> 
+          <% if memo.user_email == current_user.id %> 
+            <li class="d-flex justify-content-between align-items-center border-bottom pb-1 mb-1">
+              <%= "#{memo.content}" %>
+              <%= form_with url: "/memos/#{memo.id}", method: :delete, data: { turbo: false }, html: { class: "d-inline" } do %>
+                <%= button_tag "✓", class: "btn btn-outline-primary btn-sm", style: "font-size: 10px; padding: 2px 4px;" %>
+              <% end %>
+            </li>
+          <% end %> 
+        <% end %>
+      </ul>
+    </div>
+
+    <!-- 入力フォーム -->
+    <div id="memo-form" class="memo-form">
+      <%= form_with model: @new_memo, local: true, html: { class: "d-flex align-items-start gap-2 w-100" } do |f| %>
+        <%= f.text_area :content, placeholder: "メモを入力", rows: 1, class: "form-control", style: "resize: none;" %>
+        <%= f.submit "追加", class: "btn btn-primary" %>
+      <% end %>
+    </div>
+  </div>
+</div>
 
 <script>
   const hour = "<%= DateInfo.time %>";
@@ -90,9 +116,7 @@
   let markerLayer;
   const Tsukuba = [36.08622886, 140.10623424];
   let places = [];
-
-  title.innerHTML = year + "年" + term + weekday;
-
+  
   const showmap = async (youbi) => {
     try {
       places = [];
@@ -172,5 +196,79 @@
   week_id.addEventListener("change", (e) => {
     const youbi = e.target.value;
     showmap(youbi);
+  });
+
+  // リロードしないと地図が見れない問題の対処
+  document.addEventListener("DOMContentLoaded", () => {
+    const forms = [
+      ...document.querySelectorAll("form[id^='delete-form-']"),
+      document.getElementById("memo-form")
+    ];
+
+    forms.forEach(form => {
+      if (form) {
+        form.addEventListener("submit", () => {
+          setTimeout(() => location.reload(), 20);
+        });
+      }
+    });
+  });
+
+  // メモの表示/非表示を切り替える（まとめて切り替え）
+  function toggleMemos() {
+    const memoContainer = document.getElementById('memo-container');
+    const isHidden = memoContainer.style.display === 'none';
+    memoContainer.style.display = isHidden ? 'block' : 'none';
+  }
+
+  function toggleMemos() {
+    const memoContainer = document.getElementById('memo-container');
+    const isHidden = memoContainer.style.display === 'none';
+    memoContainer.style.display = isHidden ? 'block' : 'none';
+
+    // localStorageに状態を保存
+    localStorage.setItem('memoVisible', isHidden ? 'true' : 'false');
+  }
+
+  // ページ読み込み時に状態を復元
+  document.addEventListener('DOMContentLoaded', () => {
+    const memoContainer = document.getElementById('memo-container');
+    const isVisible = localStorage.getItem('memoVisible');
+
+    if (isVisible === 'false') {
+      memoContainer.style.display = 'none';
+    } else {
+      memoContainer.style.display = 'block';
+    }
+  });
+
+  // 天気の表示/非表示を切り替える
+  function toggleWeather() {
+    const weatherContent = document.getElementById('weather-content');
+    const isHidden = weatherContent.style.display === 'none';
+    weatherContent.style.display = isHidden ? 'block' : 'none';
+
+    // localStorageに状態を保存
+    localStorage.setItem('weatherVisible', isHidden ? 'true' : 'false');
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // メモの状態復元
+    const memoContainer = document.getElementById('memo-container');
+    const memoVisible = localStorage.getItem('memoVisible');
+    if (memoVisible === 'false') {
+      memoContainer.style.display = 'none';
+    } else {
+      memoContainer.style.display = 'block';
+    }
+
+    // 天気の状態復元
+    const weatherContent = document.getElementById('weather-content');
+    const weatherVisible = localStorage.getItem('weatherVisible');
+    if (weatherVisible === 'false') {
+      weatherContent.style.display = 'none';
+    } else {
+      weatherContent.style.display = 'block';
+    }
   });
 </script>
