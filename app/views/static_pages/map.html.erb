@@ -21,7 +21,7 @@
   today = DateInfo.weekday 
 %>
 
-<div id="map"></div>
+<div id="map">読み込み中...</div>
 
 <div class="weather-container">
   <button class="btn btn-primary btn-sm mb-2" onclick="toggleWeather()">表示切替</button>
@@ -192,14 +192,14 @@
     }
   };
 
-  window.addEventListener("turbo:load", () => showmap());
-  // week_id.addEventListener("change", (e) => {
-  //   const youbi = e.target.value;
-  //   showmap(youbi);
-  // });
+  window.addEventListener("load", () => showmap());
+  week_id.addEventListener("change", (e) => {
+    const youbi = e.target.value;
+    showmap(youbi);
+  });
 
   // リロードしないと地図が見れない問題の対処
-  document.addEventListener("turbo:load", () => {
+  document.addEventListener("load", () => {
     const forms = [
       ...document.querySelectorAll("form[id^='delete-form-']"),
       document.getElementById("memo-form")
