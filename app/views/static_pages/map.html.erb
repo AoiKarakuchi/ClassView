@@ -3,18 +3,17 @@
 <% content_for :head do %>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-    <% if flash[:just_logged_in] %>
-      <script>
-        // 1回だけリロードしてセッションを有効にした状態でAPIを呼び直す
-        if (!window.sessionStorage.getItem("reloadedAfterLogin")) {
-          window.sessionStorage.setItem("reloadedAfterLogin", "true");
-          location.reload();
-        } else {
-          window.sessionStorage.removeItem("reloadedAfterLogin");
-        }
-      </script>
-    <% end %>
 <% end %>
+
+<script>
+  // 1回だけリロードしてセッションを有効にした状態でAPIを呼び直す
+  if (!window.sessionStorage.getItem("reloadedAfterLogin")) {
+    window.sessionStorage.setItem("reloadedAfterLogin", "true");
+    location.reload();
+  } else {
+    window.sessionStorage.removeItem("reloadedAfterLogin");
+  }
+</script>
 
 <% 
   days = { "月" => "月曜日", "火" => "火曜日", "水" => "水曜日", "木" => "木曜日", "金" => "金曜日" }
@@ -71,6 +70,14 @@
     <% end %>
   </div>
 </div>
+
+<select id="dayofweek">
+  <% days.each do |value, name| %>
+    <option value="<%= value %>" <%= 'selected' if value == today %>>
+      <%= name %>
+    </option>
+  <% end %>
+</select>
     
 <!-- 正確には初期表示に戻るボタン -->
 <button class="location-button" onclick="location.reload()">現在地に戻る</button>
@@ -151,9 +158,9 @@
       // マーカーの定義
       const Icon = L.Icon.extend({
         options: {
-          iconSize: [25, 30],
-          iconAnchor: [12.5, 30],
-          popupAnchor: [0, -20]
+          iconSize: [25, 40],
+          iconAnchor: [17, 40],
+          popupAnchor: [-5, -30]
         }
       });
 

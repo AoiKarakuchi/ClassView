@@ -397,3 +397,8 @@ th, td, small, label, h1, h4, button {
         border-radius: 6px;
     }
 }
+
+#dayofweek {
+    position: fixed;
+    z-index: 100;
+}
