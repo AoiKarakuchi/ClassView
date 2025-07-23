@@ -402,3 +402,34 @@ th, td, small, label, h1, h4, button {
     position: fixed;
     z-index: 100;
 }
+
+.custom-file-input {
+  label {
+    display: inline-block;
+    padding: 8px 15px;
+    color: #fff;
+    background-color: #666;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: #9d9d9d; 
+    }
+  }
+}
+.flash-message {
+  padding: 1rem;
+  margin: 1rem;
+  border-radius: 4px;
+  text-align: center;
+  font-weight: bold;
+  &.notice {
+    background-color: #d1e7dd;
+    color: #0f5132;
+  }
+  &.alert {
+    background-color: #f8d7da;
+    color: #842029;
+  }
+}

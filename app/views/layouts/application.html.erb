@@ -12,6 +12,12 @@
 
   <body>
     <%= render "layouts/components/nav" %>
+    <%# alertなどが表示されるようにしました %>
+    <% flash.each do |key, value| %>
+      <div class="flash-message <%= key%>">
+        <%= value %>
+      </div>
+    <% end %>
     <%= yield %>
     <%# 地図表示で追加しました %>
     <script>
