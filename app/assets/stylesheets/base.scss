@@ -1,8 +1,16 @@
 /* universal */
-body {
-  background: #e6e5ef;
+
+:root {
+  --main-color: #E6E5EF;
+  --background-color: #F5F5F9;
+  --mozi-color: #666;
 }
 
+body {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  background-color: var(--background-color);
+  color: #666;
+}
 section {
   overflow: auto;
 }
@@ -46,6 +54,6 @@ p {
   line-height: 1.7em;
 }
 
-nav {
-  z-index: 100;
+.navbar {
+  z-index: 3;
 }

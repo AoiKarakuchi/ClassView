@@ -1,0 +1,174 @@
+#map {
+    position: fixed;
+    top: 5%;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+}
+.weather-container {
+    position: fixed;
+    top: 5%;
+    left: 6%;
+    width: 52%;
+    z-index: 2;
+    max-height: 30%;
+    overflow-y: auto;
+    background-color: rgba(255, 255, 255, 0.8);
+    color: #4a4a4a;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    width: 50%;
+    padding: 1em;
+    box-sizing: border-box;
+    border-radius: 8px;
+    font-size: 0.85rem;
+}
+
+.forecast-scroll {
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-top: 1rem;
+}
+
+.forecast-item {
+    display: inline-block;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 0.5rem;
+    border-radius: 6px;
+    margin-right: 0.5rem;
+    min-width: 100px;
+    text-align: center;
+}
+
+.weather-icon {
+    width: 40px;
+    height: 40px;
+}
+
+.current-temp {
+    font-size: 2rem;
+    font-weight: bold;
+}
+.memo-box {
+    position: fixed;
+    top: 5%;
+    right: 7%;
+    width: 35%;
+    max-height: 30%;
+    overflow-y: auto;
+    z-index: 2;
+    background-color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 1em;
+    box-sizing: border-box;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.memo-box form button {
+    font-size: 12px;
+    padding: 2px 6px;
+}
+
+.memo-box ul {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 0.5em;
+}
+
+.memo-box li {
+    margin-bottom: 0.3em;
+}
+
+.memo-form textarea {
+    resize: none;
+}
+
+.location-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    padding: 10px 15px;
+    font-size: 14px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 1px solid #888;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.forecast-box {
+    display: none;
+}
+
+@media screen and (max-width: 600px) {
+    #map {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        z-index: 1;
+    }
+
+    .weather-container {
+        position: fixed;
+        top: 2%;
+        left: 4%;
+        width: 92%;
+        max-height: 35%;
+        overflow-y: auto;
+        z-index: 2;
+        border-radius: 8px;
+        padding: 0.8em 1em;
+        box-sizing: border-box;
+        font-size: 0.85rem;
+    }
+
+    .memo-box {
+        position: fixed;
+        top: auto;
+        bottom: 5%;
+        left: 4%;
+        width: 92%;
+        max-height: 20%;
+        overflow-y: auto;
+        z-index: 2;
+        border-radius: 8px;
+        padding: 0.8em 1em;
+        box-sizing: border-box;
+        font-size: 13px;
+        font-size: 0.85rem;
+    }
+
+    .forecast-scroll {
+        padding-top: 0.5rem;
+    }
+
+    .weather-icon {
+        width: 30px;
+        height: 30px;
+    }
+
+    .current-temp {
+        font-size: 1.6rem;
+    }
+
+    .location-button {
+        position: fixed;
+        bottom: 10px;
+        bottom: 5px;
+        right: -30px;
+        transform: translateX(-50%);
+        z-index: 1000;
+        padding: 8px 12px;
+        font-size: 13px;
+        border-radius: 6px;
+    }
+}
+
+#dayofweek {
+    position: fixed;
+    z-index: 2;
+}
