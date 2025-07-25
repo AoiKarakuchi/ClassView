@@ -20,7 +20,17 @@
   today = DateInfo.weekday 
 %>
 
-<div id="map">読み込み中...</div>
+<div id="map">
+  読み込み中...
+  <select id="dayofweek">
+    <% days.each do |value, name| %>
+      <option value="<%= value %>" <%= 'selected' if value == today %>>
+        <%= name %>
+      </option>
+    <% end %>
+  </select>
+  <button class="location-button" onclick="location.reload()">現在地に戻る</button>
+</div>
 
 <div class="weather-container">
   <button class="btn btn-primary btn-sm mb-2" onclick="toggleWeather()">表示切替</button>
@@ -70,17 +80,6 @@
     <% end %>
   </div>
 </div>
-
-<select id="dayofweek">
-  <% days.each do |value, name| %>
-    <option value="<%= value %>" <%= 'selected' if value == today %>>
-      <%= name %>
-    </option>
-  <% end %>
-</select>
-    
-<!-- 正確には初期表示に戻るボタン -->
-<button class="location-button" onclick="location.reload()">現在地に戻る</button>
   
 <div class="memo-box">
   <button class="btn btn-primary btn-sm mb-2" onclick="toggleMemos()">表示切替</button>
@@ -92,9 +91,8 @@
           <% if memo.user_email == current_user.email %> 
             <li class="d-flex justify-content-between align-items-center border-bottom pb-1 mb-1">
               <%= "#{memo.content}" %>
-              <%= form_with url: "/memos/#{memo.id}", method: :delete, data: { turbo: false }, html: { class: "d-inline" } do %>
-                <%= button_tag "✓", class: "btn btn-outline-primary btn-sm", style: "font-size: 10px; padding: 2px 4px;" %>
-              <% end %>
+              <%= link_to "delete", memo, data: { "turbo-method": :delete,
+                                                  turbo_stream: "You sure?" }%>
             </li>
           <% end %> 
         <% end %>

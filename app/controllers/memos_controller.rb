@@ -7,13 +7,8 @@ class MemosController < ApplicationController
     end
 
     def destroy
-        if (memo=Memo.find(params["id"].to_i)) && (current_user.id == memo.user_email)
-            memo.destroy
-            flash[:success] = "メモを削除しました"
-        else
-            flash[:danger] = "メモの削除に失敗しました"
-        end
-        redirect_to request.referer
+        Memo.find(params[:id]).destroy
+        redirect_to root_url, status: :see_other
     end
 
     private

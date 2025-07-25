@@ -2,27 +2,13 @@
     position: fixed;
     bottom: 0;
     right: 0;
-    height: 85%;
-    width: 85%;
+    height: 90%;
+    width: 100%;
     z-index: 1;
 }
 
 .weather-container {
-    position: fixed;
-    top: 5%;
-    left: 6%;
-    width: 52%;
-    z-index: 2;
-    max-height: 30%;
-    overflow-y: auto;
-    background-color: rgba(255, 255, 255, 0.8);
-    color: #4a4a4a;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    width: 50%;
-    padding: 1em;
-    box-sizing: border-box;
-    border-radius: 8px;
-    font-size: 0.85rem;
+    z-index: 100;
 }
 
 .forecast-scroll {
@@ -106,9 +92,9 @@
 @media screen and (max-width: 600px) {
     #map {
         position: fixed;
-        top: 0;
-        left: 0;
-        height: 100%;
+        bottom: 0;
+        right: 0;
+        height: 90%;
         width: 100%;
         z-index: 1;
     }
@@ -171,5 +157,5 @@
 
 #dayofweek {
     position: fixed;
-    z-index: 2;
+    z-index: 1000;
 }
