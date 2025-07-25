@@ -119,7 +119,7 @@
   const showbutton = document.getElementById("show");
   let map;
   let markerLayer;
-  const Tsukuba = [36.08622886, 140.10623424];
+  const Tsukuba = [36.1055282, 140.1027];
   let places = [];
 
   const showmap = async (youbi) => {
@@ -166,7 +166,7 @@
       const redIcon = new Icon({ iconUrl: '<%= asset_path('red_marker.png') %>' });
 
       if (!map) {
-        map = L.map("map").setView(Tsukuba, 18); // 春日エリア
+        map = L.map("map").setView(Tsukuba, 14); 
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
           attribution: "&copy; OpenStreetMap contributors",
         }).addTo(map);
