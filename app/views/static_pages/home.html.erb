@@ -1,6 +1,12 @@
 <% provide :title, "Home" %>
 
 <div class="container">
+  <%# alertなどが表示されるようにしました %>
+  <% flash.each do |key, value| %>
+    <div class="alert alert-<%= key %>">
+      <%= value %>
+    </div>
+  <% end %>
   <div class="form-group">
     <label for="year">年度:</label>
     <select id="year">

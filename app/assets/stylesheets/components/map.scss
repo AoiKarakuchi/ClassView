@@ -1,11 +1,12 @@
 #map {
     position: fixed;
-    top: 5%;
-    left: 0;
-    height: 100%;
-    width: 100%;
+    bottom: 0;
+    right: 0;
+    height: 85%;
+    width: 85%;
     z-index: 1;
 }
+
 .weather-container {
     position: fixed;
     top: 5%;

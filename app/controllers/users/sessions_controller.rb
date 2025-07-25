@@ -28,11 +28,11 @@ class Users::SessionsController < Devise::SessionsController
 
   # サインイン後のリダイレクト先の指定
   def after_sign_in_path_for(resource)
-    root_path
+    root_url
   end
 
   # サインアウト後のリダイレクト先の指定
   def after_sign_out_path_for(resource_or_scope)
-    root_path
+    new_user_session_url
   end
 end
