@@ -1,0 +1,25 @@
+.memo-btn {
+    background-color: rgba(255, 255, 255, 0.7);
+    position: fixed;
+    top: 6rem;
+    z-index: 1000;
+    &:hover {
+        background-color: rgba(255, 255, 255);
+    }
+}
+.memo-add-btn {
+    transform: scale(0.9);
+}
+
+ul.list-style-none li{
+    list-style: none;
+}
+
+.memo-body {
+    flex: 1 1 auto;
+    padding: 1rem;
+}
+
+.memo-text {
+    font-size: 1em;
+}

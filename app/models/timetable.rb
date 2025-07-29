@@ -5,5 +5,4 @@ class Timetable < ApplicationRecord
     validates :semester, presence: true
     validates :dayofweek, presence: true, unless: -> { note.present? }
     validates :hour, presence: true, unless: -> { note.present? }
-
 end

@@ -4,6 +4,7 @@
   --main-color: #E6E5EF;
   --background-color: #F5F5F9;
   --mozi-color: #666;
+  --smooth-corners: 2.25;
 }
 
 body {
@@ -17,6 +18,10 @@ section {
 
 textarea {
   resize: vertical;
+}
+
+nav {
+  z-index: 1000;
 }
 
 .center {
@@ -52,8 +57,4 @@ h2 {
 p {
   font-size: 1.1em;
   line-height: 1.7em;
-}
-
-.navbar {
-  z-index: 3;
 }

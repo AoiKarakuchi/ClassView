@@ -6,6 +6,12 @@ class User < ApplicationRecord
          :omniauthable, omniauth_providers: %i[twitter google_oauth2]
 
   validates :uid, presence: true, uniqueness: { scope: :provider }, if: -> { uid.present? }
+  #アソシエーションとバリデーションの設定
+  has_many :user_regist_subjects,foreign_key: :user_email, primary_key: :email
+  has_many :subjects, through: :user_regist_subjects,source: :subject
+  validates :email, presence: true
+  validates :name, presence: true
+  has_many :memos, foreign_key: "user_email", primary_key: "email", dependent: :destroy
 
   # Omniauth認証データを元にデータベースでユーザーを探す。
   def self.from_omniauth(auth)
@@ -38,12 +44,4 @@ class User < ApplicationRecord
       update_attributes(params, *options)
     end
   end
-
-  #アソシエーションとバリデーションの設定
-  has_many :user_regist_subjects,foreign_key: :user_email, primary_key: :email
-  has_many :subjects, through: :user_regist_subjects,source: :subject
-  validates :email, presence: true
-  validates :name, presence: true
-  has_many :memos, foreign_key: "user_email", primary_key: "email"
-
 end

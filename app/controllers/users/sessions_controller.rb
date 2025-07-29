@@ -11,7 +11,7 @@ class Users::SessionsController < Devise::SessionsController
   # POST /resource/sign_in
   def create# 地図表示で追加しました
     super do |resource|
-      flash[:just_logged_in]=true
+      flash.now[:just_logged_in]=true
     end
   end
   # DELETE /resource/sign_out

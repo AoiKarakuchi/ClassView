@@ -1,0 +1,46 @@
+<div class="container weather-container">
+    <div class="card weather-card">
+        <div class="card-body">
+            <% if @current %>
+                <div class="row align-items-center">
+                    <% icon_code = @current["weather"][0]["icon"] %>
+                    <div class="col-6 ps-5">
+                        <p class="temp mb-0"><%= @current["main"]["temp"].round %>℃</p>
+                        <p class="humi mb-0">湿度: <%= @current["main"]["humidity"] %>%</p>
+                        <p class="wind mb-0">風速: <%= @current["wind"]["speed"] %> m/s</p>
+                        <% if @current["rain"] && @current["rain"]["1h"] %>
+                            <p class="rain mb-0">直近1時間の降水量: <%= @current["rain"]["1h"] %> mm</p>
+                        <% end %>
+                    </div> 
+                    <div class="col-6 justify-content-right">
+                        <img src="https://openweathermap.org/img/wn/<%= icon_code %>@2x.png" alt="天気アイコン" class="img-fluid">
+                    </div>                   
+                </div>
+            <% else %>
+                <p class="alert alert-danger">現在の天気を取得できませんでした。</p>
+            <% end %> 
+        </div>
+        <div class="card-footer">
+            <% if @forecasts.present? %>
+                <% count = 0 %>
+                <% now = Time.current %>
+                <div class="row align-items-center">
+                    <% @forecasts.each do |f| %>
+                        <% forecast_time = Time.parse(f["dt_txt"]) %>
+                        <% next if forecast_time < now %>
+                        <% break if count >= 10 %>
+                        <% icon = f["weather"][0]["icon"] %>
+                        <div class="col">
+                            <p class="row row1"><%= forecast_time.strftime("%H:%M") %></p>
+                            <div class="row row2"><img src="https://openweathermap.org/img/wn/<%= icon %>@2x.png" alt="天気" class="img-fluid"></div>
+                            <p class="row row3"><%= f["main"]["temp"].round %>℃</p>                           
+                        </div>
+                        <% count += 1 %>
+                    <% end %>                    
+                </div>
+            <% else %>
+                <p class="alert alert-danger">天気予報のデータを取得できませんでした。</p>
+            <% end %>
+        </div>
+    </div>
+</div>

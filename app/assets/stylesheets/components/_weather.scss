@@ -1,0 +1,56 @@
+.weather-container {
+    position: fixed;
+    left: -8em;
+    bottom: -3em;
+    width: fit-content;
+    transform: scale(0.6);
+    z-index: 1000;
+}
+
+.weather-card {
+    background-color: rgba(238, 237, 237, 0.9);
+    border-radius: 1.5rem;
+    border-color: rgba(238, 237, 237, 0.438);
+    box-shadow: 5px 8px 10px #80808033;
+}
+
+.temp {
+    font-size: 4rem;
+    color: rgb(57, 57, 58);
+}
+
+.humi, .wind, .rain {
+    color: gray;
+}
+
+.img-fluid {
+    float: right;
+    width: 65%;
+    display: flex;
+    align-items: center;
+}
+
+.col {
+    overflow: visible;
+}
+.row {
+    overflow: visible;
+}
+
+.row1,
+.row2,
+.row3 {
+    justify-content: center;
+}
+
+.row1 {
+    font-size: 0.7rem;
+    margin: 0;
+}
+.row3 {
+    font-size: 0.9rem;
+    margin: 0;
+}
+.row2 .img-fluid {
+    margin: 0;
+}

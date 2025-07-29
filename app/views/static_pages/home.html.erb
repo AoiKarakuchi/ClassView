@@ -68,7 +68,7 @@
   <div class="import-form">
     <h4>履修科目のCSVインポート</h4>
 
-    <%= form_with url: import_user_regist_subjects_path, local: true, multipart: true do |form| %>
+    <%= form_with url: import_user_regist_subjects_path, class: "import-form-detail", local: true, multipart: true do |form| %>
       <div class="custom-file-input">
         <%= form.file_field :file, id: "csv_file", style: "display: none;" %>
         <label for="csv_file">ファイルを選択</label>
