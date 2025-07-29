@@ -5,8 +5,8 @@ class StaticPagesController < ApplicationController
   end
   def map
     @user = current_user
-    @memos = Memo.all
-    @new_memo = current_user.memos.new
+    @memos = current_user.memos
+    @new_memo = current_user.memos.build
     lat = "36.08622886"
     lon = "140.10623424" #  春日校舎の緯度、経度
     service = WeatherService.new(lat, lon)

@@ -15,16 +15,16 @@
         <label for="floatingInputMemo">Memo</label>       
       </div>
     <% end %>      
-    <div>
-      <ul class="list-style-none">
-        <% @memos.each do |memo| %> 
+    <ul class="list-style-none">
+      <% @memos.each do |memo| %>
+        <% if memo.id.present? %>
           <li id="memo-<%= memo.id %>" class="d-flex memo-body border-bottom">
             <span class="memo-text"><%= memo.content %></span>
             <%= link_to "", memo_path(memo), data: { "turbo-method": :delete,
                                                 turbo_stream: "You sure" }, class: "ms-auto btn-close", "type": "button", "aria-label": "Close" %>
           </li>
         <% end %>
-      </ul>     
-    </div>    
+      <% end %>
+    </ul>    
   </div>      
 </div>
