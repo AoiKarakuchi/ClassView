@@ -7,6 +7,11 @@
       <%= value %>
     </div>
   <% end %>
+
+  <% 
+    terms = ["春A", "春B", "春C", "夏季休業中", "秋A", "秋B", "秋C", "春季休業中", "通年"]
+    now_term = DateInfo.semester 
+  %>
   <div class="form-group">
     <label for="year">年度:</label>
     <select id="year">
@@ -16,15 +21,11 @@
     </select>
 
     <select id="term">
-        <option value="春A">春A</option>
-        <option value="春B">春B</option>
-        <option value="春C">春C</option>
-        <option value="夏季休業中">夏季休業中</option>
-        <option value="秋A">秋A</option>
-        <option value="秋B">秋B</option>
-        <option value="秋C">秋C</option>
-        <option value="春季休業中">春季休業中</option>
-        <option value="通年">通年</option>
+      <% terms.each do |term| %>
+        <option value="<%= term %>" <%= 'selected' if term == now_term %>>
+          <%= term %>
+        </option>
+      <% end %>
     </select>
   </div>
 
